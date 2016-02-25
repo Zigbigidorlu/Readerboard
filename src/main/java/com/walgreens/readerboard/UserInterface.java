@@ -21,9 +21,9 @@ import java.util.List;
  * @since 2/22/2016
  */
 public class UserInterface extends JFrame implements ActionListener {
-    private Color wagRed = new Color(229,24,55);
-    private Color background = Color.WHITE;
-    private List<Image> icons = new ArrayList<>();
+    static Color wagRed = new Color(229,24,55);
+    static Color background = Color.WHITE;
+    static List<Image> icons = new ArrayList<>();
 
     UserInterface() {
         // Set icon/s
@@ -134,7 +134,7 @@ public class UserInterface extends JFrame implements ActionListener {
     }
 
     private void aboutDialog() {
-        new AboutDialog(icons);
+        new AboutDialog();
     }
 
     @Override

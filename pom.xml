@@ -7,7 +7,7 @@
     <groupId>com.walgreens</groupId>
     <artifactId>readerboard</artifactId>
     <name>Readerboard Assistant</name>
-    <version>0.1</version>
+    <version>1.0 Alpha</version>
 
     <build>
         <plugins>
