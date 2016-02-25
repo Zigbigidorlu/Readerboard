@@ -2,6 +2,10 @@ package com.walgreens.readerboard;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
@@ -16,34 +20,29 @@ import java.awt.event.WindowEvent;
  * @author Adam Treadway
  * @since 2/22/2016
  */
-public class CrashHandler {
+public class CrashHandler extends JDialog {
     CrashHandler(Exception e) {
-        // Build dialog
-        JDialog dialog = new JDialog();
-        dialog.setTitle("Readerboard Assistant has crashed!");
-        dialog.setAlwaysOnTop(true);
-        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        // Set properties
+        setTitle(Main.name + " has crashed!");
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         // Build dimensions
-        Dimension dimension = new Dimension(500,200);
-        dialog.setPreferredSize(dimension);
-        dialog.setResizable(false);
-        dialog.setModal(true);
+        Dimension dimension = new Dimension(500,250);
+        setPreferredSize(dimension);
+        setResizable(false);
+        setModal(true);
 
         // Build the content panel
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new EmptyBorder(10,10,10,10));
-        dialog.add(panel);
+        add(panel);
 
         // North panel
         JPanel north = new JPanel();
         north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
-        JLabel oops = new JLabel(
-                "Oops!", JLabel.CENTER);
-        JLabel explanation = new JLabel(
-                "Readerboard Assistant has crashed!", JLabel.CENTER);
-        JLabel explanation2 = new JLabel(
-                "Please provide this information to the developer for analysis:", JLabel.CENTER);
+        JLabel oops = new JLabel("Oops!", JLabel.CENTER);
+        JLabel explanation = new JLabel(Main.name + " has crashed!", JLabel.CENTER);
+        JLabel explanation2 = new JLabel("Please provide this information to the developer for analysis:", JLabel.CENTER);
 
         // Alignment
         oops.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -64,18 +63,34 @@ public class CrashHandler {
         panel.add(north, BorderLayout.NORTH);
 
         // Center panel
-        JTextArea textArea = new JTextArea();
+        JTextPane textArea = new JTextPane();
         textArea.setEditable(false);
-        textArea.setLineWrap(true);
 
-        // Add message
-        textArea.setText(e.getMessage());
-        textArea.append("\n");
+        Document document = textArea.getDocument();
+        try {
+            // Add message
+            SimpleAttributeSet bold = new SimpleAttributeSet();
+            bold.addAttribute(StyleConstants.CharacterConstants.Bold,true);
+            StyleConstants.setFontSize(bold,14);
+            document.insertString(0, e.getMessage() + "\n\n", bold);
 
-        // Write stack trace
-        for(StackTraceElement element : e.getStackTrace()) {
-            textArea.append(" -> " + element.getFileName() + ":" + element.getMethodName() + ":" + element.getLineNumber());
+            // Write stack trace
+            SimpleAttributeSet italics = new SimpleAttributeSet();
+            bold.addAttribute(StyleConstants.CharacterConstants.Italic,true);
+            for (StackTraceElement element : e.getStackTrace()) {
+                document.insertString(document.getLength()," -> " +
+                        element.getFileName() +
+                        ":" + element.getMethodName() +
+                        ":" + element.getLineNumber() +
+                        "\n", italics);
+            }
         }
+        catch (BadLocationException ble) {
+            ble.printStackTrace();
+        }
+
+        // Keep scroll up top
+        textArea.setCaretPosition(0);
 
         JScrollPane scrollPane = new JScrollPane(textArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -90,18 +105,18 @@ public class CrashHandler {
         button.addActionListener(e1 -> {
             StringSelection contents = new StringSelection(textArea.getText());
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents,null);
-            dialog.dispose();
+            dispose();
         });
         south.add(button);
 
         // Add basic close button
         JButton close = new JButton();
         close.setText("Close without copying message");
-        close.addActionListener(e1 -> dialog.dispose());
+        close.addActionListener(e1 -> dispose());
         south.add(close);
 
         // Default to close button
-        dialog.getRootPane().setDefaultButton(close);
+        getRootPane().setDefaultButton(close);
 
         // Add border for spacing
         south.setBorder(new EmptyBorder(10,10,0,10));
@@ -110,16 +125,16 @@ public class CrashHandler {
         panel.add(south, BorderLayout.SOUTH);
 
         // Add content panel
-        dialog.add(panel);
+        add(panel);
 
         // Pack contents
-        dialog.pack();
+        pack();
 
         // Center in screen
-        dialog.setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
 
         // Run kill operation when the window is disposed
-        dialog.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 System.exit(-1);
@@ -127,6 +142,6 @@ public class CrashHandler {
         });
 
         // Show
-        dialog.setVisible(true);
+        setVisible(true);
     }
 }

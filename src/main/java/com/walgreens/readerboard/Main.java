@@ -4,6 +4,7 @@ import org.ini4j.Ini;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.Properties;
 
 /**
  * Readerboard
@@ -16,8 +17,9 @@ import java.io.*;
  */
 public class Main {
     private Ini ini;
-    private SaveState savestate;
-    private int boardCount, lineCount, maxLength;
+    static SaveState savestate;
+    static int boardCount, lineCount, maxLength;
+    static String name, version;
 
     private int
             default_boardCount = 4,
@@ -45,6 +47,7 @@ public class Main {
 
         // Load data and start GUI
         try {
+            getProperties();
             loadINI();
             loadSaveState();
             startGUI();
@@ -52,6 +55,13 @@ public class Main {
         catch (IOException|ClassNotFoundException e) {
             new CrashHandler(e);
         }
+    }
+
+    private void getProperties() throws IOException {
+        Properties properties = new Properties();
+        properties.load(UserInterface.class.getClassLoader().getResourceAsStream("project.properties"));
+        name = properties.getProperty("name");
+        version = properties.getProperty("version");
     }
 
     // Load configuration file
@@ -108,6 +118,6 @@ public class Main {
     }
 
     private void startGUI() {
-        new UserInterface(savestate, lineCount, maxLength);
+        new UserInterface();
     }
 }

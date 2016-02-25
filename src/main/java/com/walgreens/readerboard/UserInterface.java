@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Readerboard
@@ -22,18 +21,11 @@ import java.util.Properties;
  * @since 2/22/2016
  */
 public class UserInterface extends JFrame implements ActionListener {
-    private Color walgreensRed = new Color(229,24,55);
+    private Color wagRed = new Color(229,24,55);
     private Color background = Color.WHITE;
     private List<Image> icons = new ArrayList<>();
 
-    private SaveState saveState;
-    private int lineCount, maxLength;
-    UserInterface(SaveState saveState, int lineCount, int maxLength) {
-        // Assign variables locally
-        this.saveState = saveState;
-        this.lineCount = lineCount;
-        this.maxLength = maxLength;
-
+    UserInterface() {
         // Set icon/s
         try {
             ClassLoader loader = getClass().getClassLoader();
@@ -57,7 +49,7 @@ public class UserInterface extends JFrame implements ActionListener {
         buildInterface();
 
         // Set window configuration
-        setTitle("Readerboard Assistant");
+        setTitle(Main.name);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
@@ -96,22 +88,15 @@ public class UserInterface extends JFrame implements ActionListener {
         JLabel image = new JLabel(new ImageIcon(url));
         header.add(image, BorderLayout.WEST);
 
-        try {
-            Properties properties = new Properties();
-            properties.load(UserInterface.class.getClassLoader().getResourceAsStream("project.properties"));
-            JLabel version = new JLabel("Version " + properties.getProperty("version"));
-            version.setForeground(new Color(200,200,200));
-            version.setBorder(new EmptyBorder(0,0,10,20));
-            version.setVerticalAlignment(JLabel.BOTTOM);
-            header.add(version, BorderLayout.EAST);
-        }
-        catch (IOException e) {
-            // Ignore; Not important.
-        }
+        JLabel version = new JLabel("Version " + Main.version);
+        version.setForeground(new Color(200,200,200));
+        version.setBorder(new EmptyBorder(0,0,10,20));
+        version.setVerticalAlignment(JLabel.BOTTOM);
+        header.add(version, BorderLayout.EAST);
 
         // Add separator
         JSeparator separator = new JSeparator();
-        separator.setForeground(walgreensRed);
+        separator.setForeground(wagRed);
         header.add(separator, BorderLayout.SOUTH);
 
         return header;
@@ -126,7 +111,7 @@ public class UserInterface extends JFrame implements ActionListener {
         Dimension dimension = new Dimension();
         dimension.width = 60;
         toolBar.setPreferredSize(dimension);
-        toolBar.setBackground(walgreensRed);
+        toolBar.setBackground(wagRed);
 
         // Top menu
         JPanel menu = new JPanel();
