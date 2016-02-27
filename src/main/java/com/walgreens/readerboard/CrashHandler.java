@@ -70,7 +70,7 @@ public class CrashHandler extends JDialog {
         try {
             // Add message
             SimpleAttributeSet bold = new SimpleAttributeSet();
-            bold.addAttribute(StyleConstants.CharacterConstants.Bold,true);
+            bold.addAttribute(StyleConstants.CharacterConstants.Bold, true);
             StyleConstants.setFontSize(bold,14);
             document.insertString(0, e.getMessage() + "\n\n", bold);
 

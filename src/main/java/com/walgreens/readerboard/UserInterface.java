@@ -3,6 +3,7 @@ package com.walgreens.readerboard;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,6 +78,11 @@ public class UserInterface extends JFrame implements ActionListener {
         view.add(buildHeader(), BorderLayout.NORTH);
         view.add(buildToolbar(), BorderLayout.WEST);
 
+        JPanel contents = new JPanel();
+        MatteBorder border = new MatteBorder(1,0,0,0,wagRed);
+        contents.setBorder(border);
+        view.add(contents);
+
         // Put contents in frame
         add(view);
     }
@@ -93,11 +99,6 @@ public class UserInterface extends JFrame implements ActionListener {
         version.setBorder(new EmptyBorder(0,0,10,20));
         version.setVerticalAlignment(JLabel.BOTTOM);
         header.add(version, BorderLayout.EAST);
-
-        // Add separator
-        JSeparator separator = new JSeparator();
-        separator.setForeground(wagRed);
-        header.add(separator, BorderLayout.SOUTH);
 
         return header;
     }

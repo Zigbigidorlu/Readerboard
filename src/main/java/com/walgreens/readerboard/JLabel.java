@@ -23,6 +23,11 @@ public class JLabel extends javax.swing.JLabel {
         super(imageIcon);
     }
 
+    public JLabel(String str, int pos) {
+        this(str);
+        setHorizontalAlignment(pos);
+    }
+
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
