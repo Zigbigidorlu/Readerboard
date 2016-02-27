@@ -3,7 +3,6 @@ package com.walgreens.readerboard;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.List;
 
 /**
  * Readerboard
@@ -20,7 +19,7 @@ public class AboutDialog extends JDialog {
         setResizable(false);
         setModal(true);
         setIconImages(UserInterface.icons);
-        Dimension dimension = new Dimension(250,325);
+        Dimension dimension = new Dimension(350,275);
         setPreferredSize(dimension);
 
         JPanel content = new JPanel(new BorderLayout());
@@ -29,27 +28,43 @@ public class AboutDialog extends JDialog {
         add(content);
 
         JPanel top = new JPanel();
-        top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
         top.setBackground(UserInterface.wagRed);
         top.setOpaque(true);
         content.add(top,BorderLayout.NORTH);
 
+        JPanel container = new JPanel(new BorderLayout());
+        content.add(container,BorderLayout.CENTER);
+
+        JPanel info = new JPanel();
+        info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
+        container.add(info, BorderLayout.CENTER);
+
+        JPanel icon = new JPanel("icon_64.png");
+        container.add(icon, BorderLayout.WEST);
+
         JLabel appName = new JLabel(Main.name);
-        appName.setFont(new Font("Arial",Font.BOLD, 18));
-        appName.setAlignmentX(Component.CENTER_ALIGNMENT);
-        appName.setForeground(Color.WHITE);
-        appName.setBorder(new EmptyBorder(15,0,5,0));
-        top.add(appName);
+        appName.setFont(new Font("Segoe UI",Font.BOLD, 18));
+        appName.setBorder(new EmptyBorder(10,0,5,0));
+        info.add(appName);
 
         JLabel appVersion = new JLabel("Version " + Main.version);
-        appVersion.setFont(new Font("Arial",Font.BOLD, 12));
-        appVersion.setAlignmentX(Component.CENTER_ALIGNMENT);
-        appVersion.setForeground(Color.WHITE);
-        appVersion.setBorder(new EmptyBorder(0,0,10,0));
-        top.add(appVersion);
+        appVersion.setFont(new Font("Segoe UI",Font.PLAIN, 14));
+        appVersion.setBorder(new EmptyBorder(0,0,10,10));
+        info.add(appVersion);
 
-        JPanel info = new JPanel(new BorderLayout());
-        content.add(info,BorderLayout.CENTER);
+        JLabel developed = new JLabel("<HTML>Developed for the exclusive usage of Walgreens store #03342.</HTML>");
+        developed.setBorder(new EmptyBorder(0,0,10,10));
+        info.add(developed);
+
+        JLabel distribution = new JLabel(   "<HTML>Do not distribute, copy, or otherwise make available " +
+                                            "to any other devices.</HTML>");
+        distribution.setBorder(new EmptyBorder(0,0,10,10));
+        info.add(distribution);
+
+        JLabel copyright = new JLabel(  "<HTML>The Walgreens Logo and Corner W Logo are Copyright 2016 " +
+                                        "Walgreen Co. 200 Wilmot Rd. Deerfield IL.</HTML>");
+        copyright.setBorder(new EmptyBorder(0,0,10,10));
+        info.add(copyright);
 
         pack();
         setLocationRelativeTo(null);
