@@ -22,6 +22,7 @@ import java.util.List;
  * @since 2/22/2016
  */
 public class UserInterface extends JFrame implements ActionListener {
+    GuiBoard guiBoard;
     static Color wagRed = new Color(229,24,55);
     static Color background = Color.WHITE;
     static List<Image> icons = new ArrayList<>();
@@ -79,9 +80,14 @@ public class UserInterface extends JFrame implements ActionListener {
         view.add(buildToolbar(), BorderLayout.WEST);
 
         JPanel contents = new JPanel();
+        contents.setLayout(new BoxLayout(contents,BoxLayout.Y_AXIS));
         MatteBorder border = new MatteBorder(1,0,0,0,wagRed);
         contents.setBorder(border);
-        view.add(contents);
+        view.add(contents, BorderLayout.CENTER);
+
+        guiBoard = new GuiBoard();
+        guiBoard.addKeyListener(guiBoard);
+        contents.add(guiBoard);
 
         // Put contents in frame
         add(view);
