@@ -3,6 +3,8 @@ package com.walgreens.readerboard;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Readerboard
@@ -13,7 +15,7 @@ import java.awt.*;
  * @author Adam Treadway
  * @since 2/24/2016
  */
-public class AboutDialog extends JDialog {
+public class AboutDialog extends JDialog implements MouseListener {
     AboutDialog() {
         setTitle("About " + Main.name);
         setResizable(false);
@@ -40,6 +42,8 @@ public class AboutDialog extends JDialog {
         container.add(info, BorderLayout.CENTER);
 
         JPanel icon = new JPanel("icon_64.png");
+        icon.setFocusable(true);
+        icon.addMouseListener(this);
         container.add(icon, BorderLayout.WEST);
 
         JLabel appName = new JLabel(Main.name);
@@ -70,4 +74,16 @@ public class AboutDialog extends JDialog {
         setLocationRelativeTo(null);
         setVisible(true);
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(e.getClickCount() == 7) {
+            System.out.println("Developer console");
+        }
+    }
+
+    @Override public void mousePressed(MouseEvent e) {}
+    @Override public void mouseReleased(MouseEvent e) {}
+    @Override public void mouseEntered(MouseEvent e) {}
+    @Override public void mouseExited(MouseEvent e) {}
 }

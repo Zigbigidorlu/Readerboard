@@ -19,7 +19,7 @@ import java.net.URL;
  */
 public class ImageButton extends JButton {
     public ImageButton(String text, String icon) {
-        super(text);
+        super("<HTML><CENTER>" + text + "</CENTER></HTML>");
 
         try {
             URL iconUrl = getClass().getClassLoader().getResource("icons/" + icon);

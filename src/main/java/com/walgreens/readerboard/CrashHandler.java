@@ -72,7 +72,7 @@ public class CrashHandler extends JDialog {
             SimpleAttributeSet bold = new SimpleAttributeSet();
             bold.addAttribute(StyleConstants.CharacterConstants.Bold, true);
             StyleConstants.setFontSize(bold,14);
-            document.insertString(0, e.getMessage() + "\n\n", bold);
+            document.insertString(0, e.getClass().getSimpleName() + ": " + e.getMessage() + "\n\n", bold);
 
             // Write stack trace
             SimpleAttributeSet italics = new SimpleAttributeSet();

@@ -22,6 +22,7 @@ import java.util.List;
  * @since 2/22/2016
  */
 public class UserInterface extends JFrame implements ActionListener {
+    JPanel contents;
     GuiBoard guiBoard;
     static Color wagRed = new Color(229,24,55);
     static Color background = Color.WHITE;
@@ -79,14 +80,15 @@ public class UserInterface extends JFrame implements ActionListener {
         view.add(buildHeader(), BorderLayout.NORTH);
         view.add(buildToolbar(), BorderLayout.WEST);
 
-        JPanel contents = new JPanel();
+        // Build contents panel
+        contents = new JPanel();
         contents.setLayout(new BoxLayout(contents,BoxLayout.Y_AXIS));
         MatteBorder border = new MatteBorder(1,0,0,0,wagRed);
         contents.setBorder(border);
         view.add(contents, BorderLayout.CENTER);
 
+        // Build initial GUI board (TODO: Replace with listing)
         guiBoard = new GuiBoard();
-        guiBoard.addKeyListener(guiBoard);
         contents.add(guiBoard);
 
         // Put contents in frame
@@ -97,8 +99,10 @@ public class UserInterface extends JFrame implements ActionListener {
         // Header image
         JPanel header = new JPanel(new BorderLayout());
         URL url = getClass().getClassLoader().getResource("images/header.png");
-        JLabel image = new JLabel(new ImageIcon(url));
-        header.add(image, BorderLayout.WEST);
+        if(url != null) {
+            JLabel image = new JLabel(new ImageIcon(url));
+            header.add(image, BorderLayout.WEST);
+        }
 
         JLabel version = new JLabel("Version " + Main.version);
         version.setForeground(new Color(200,200,200));
@@ -128,8 +132,13 @@ public class UserInterface extends JFrame implements ActionListener {
         menu.add(save);
         menu.add(print);
 
+        // Boards button
         JButton select = new ImageButton("Boards", Color.WHITE, "select.png", this, "select");
         menu.add(select);
+
+        // QR Export button
+        JButton qr = new ImageButton("Export", Color.WHITE, "qr.png", this, "qr");
+        menu.add(qr);
 
         toolBar.add(menu, BorderLayout.CENTER);
 
@@ -144,11 +153,14 @@ public class UserInterface extends JFrame implements ActionListener {
         new AboutDialog();
     }
 
-    @Override
+    //@Override
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()) {
             case "about":
                 aboutDialog();
+                break;
+            case "qr":
+                new QRBlockDialog();
                 break;
             default:
                 UnsupportedOperationException unsupported =
