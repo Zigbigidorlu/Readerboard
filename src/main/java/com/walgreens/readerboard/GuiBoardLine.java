@@ -6,6 +6,10 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,17 +33,20 @@ public class GuiBoardLine extends JPanel {
 
     GuiBoardLine(String contents) {
         super();
-        setBackground(new Color(194,204,203));
+        setBackground(new Color(215,225,225));
         setOpaque(true);
         setFocusable(true);
 
         // Set width
         int width = 30 * Main.maxLength;
-        setPreferredSize(new Dimension(width,40));
+        setPreferredSize(new Dimension(width,50));
 
         // Set layout
         setLayout(new GridBagLayout());
         constraints = new GridBagConstraints();
+
+        // Set border
+        setBorder(BorderFactory.createLineBorder(new Color(176,186,187),2));
 
         // Load font
         try {
@@ -92,10 +99,24 @@ public class GuiBoardLine extends JPanel {
         repaint();
     }
 
-    private class CharBlock extends JPanel {
+    void change(CharBlock block, Character character) {
+        block.put(character);
+    }
+
+    private class CharBlock extends JPanel implements MouseListener, KeyListener {
         Color color;
         CharBlock(Character character) {
+            put(character);
+            //addMouseListener(this);
+            //addKeyListener(this);
+        }
+
+        void put(Character character) {
             String c = String.valueOf(character);
+            put(c);
+        }
+
+        void put(String c) {
             color = (StringUtils.isNumeric(c)) ? Color.RED : Color.BLACK;
             Dimension size = new Dimension(30,40);
             setPreferredSize(size);
@@ -115,7 +136,49 @@ public class GuiBoardLine extends JPanel {
             label.setVerticalAlignment(JLabel.CENTER);
             label.setForeground(color);
             label.setFont(font);
+
+            removeAll();
             add(label);
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(e.getClickCount() == 2) {
+                Color focus = new Color((GuiBoard.board_default.getRed() + 20),
+                        (GuiBoard.board_default.getGreen()),
+                        (GuiBoard.board_default.getBlue())
+                );
+                setBackground(focus);
+                grabFocus();
+            }
+        }
+
+        @Override public void mousePressed(MouseEvent e) {}
+        @Override public void mouseReleased(MouseEvent e) {}
+        @Override public void mouseEntered(MouseEvent e) {}
+        @Override public void mouseExited(MouseEvent e) {}
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            if(hasFocus()) {
+                char character = Character.toLowerCase(e.getKeyChar());
+                if (GuiBoard.filterList.contains(character)) {
+                    put(character);
+                    setBackground(new Color(255,255,255,85));
+                    revalidate();
+                    repaint();
+                }
+            }
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
         }
     }
 }

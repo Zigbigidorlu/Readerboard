@@ -1,5 +1,8 @@
 package com.walgreens.readerboard;
 
+import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -15,13 +18,13 @@ import java.util.List;
  * @since 3/1/2016
  */
 public class GuiBoard extends JPanel {
-    final private List<Character> filterList = new ArrayList<>();
+    final static List<Character> filterList = new ArrayList<>();
     private char[] filter = {   'a','b','c','d','e','f','g','h','i','j',
                                 'k','l','m','n','o','p','q','r','s','t',
                                 'u','v','w','x','y','z','1','2','3','4',
                                 '5','6','7','8','9','0','$','.',',','\'',
                                 ':','!','/','?','&',' '};
-    private Color board_default     = new Color(194,204,203);
+    static Color board_default     = new Color(215,225,225);
 
     GuiBoard() {
         super();
@@ -46,13 +49,34 @@ public class GuiBoard extends JPanel {
             filterList.add(aFilter);
         }
 
+        createBoardGui();
+    }
+
+    void createBoardGui() {
+        JPanel decor = new JPanel();
+        decor.setLayout(new BoxLayout(decor, BoxLayout.Y_AXIS));
+        decor.setBackground(board_default);
+        decor.setOpaque(true);
+        Color highlight = new Color(196,206,207);
+        Color shadow = new Color(176,186,187);
+        decor.setBorder(
+                new CompoundBorder(
+                    new CompoundBorder(
+                        BorderFactory.createMatteBorder(1,1,0,0,highlight),
+                        BorderFactory.createMatteBorder(0,0,2,2,shadow)
+                    ), new EmptyBorder(10,10,10,10)
+                )
+        );
+
         for(int i = 0; i < Main.lineCount; i++) {
             GuiBoardLine line = new GuiBoardLine("Foo 123! Bingo.");
             line.addKeyListener(new KeyEventListener(line));
             line.addMouseListener(new MouseEventListener(line));
             line.addFocusListener(new FocusEventListener(line));
-            add(line);
+            decor.add(line);
         }
+
+        add(decor);
     }
 
     class KeyEventListener implements KeyListener {
