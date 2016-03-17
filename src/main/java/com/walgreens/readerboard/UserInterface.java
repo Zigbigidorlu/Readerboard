@@ -4,9 +4,11 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -57,7 +59,7 @@ public class UserInterface extends JFrame implements ActionListener {
         setResizable(false);
 
         // Set dimensions
-        Dimension dimension = new Dimension(800,600);
+        Dimension dimension = new Dimension(600,450);
         setPreferredSize(dimension);
 
         // Pack elements
@@ -127,7 +129,7 @@ public class UserInterface extends JFrame implements ActionListener {
         // Top menu
         JPanel menu = new JPanel();
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
-        JButton save = new ImageButton("Commit", Color.WHITE, "save.png", this, "commit");
+        JButton save = new ImageButton("Import", Color.WHITE, "import.png", this, "import");
         JButton print = new ImageButton("Print", Color.WHITE, "print.png", this, "print");
         menu.add(save);
         menu.add(print);
@@ -137,8 +139,8 @@ public class UserInterface extends JFrame implements ActionListener {
         menu.add(select);
 
         // QR Export button
-        JButton qr = new ImageButton("Export", Color.WHITE, "qr.png", this, "qr");
-        menu.add(qr);
+        /*JButton qr = new ImageButton("Export", Color.WHITE, "qr.png", this, "qr");
+        menu.add(qr);*/
 
         toolBar.add(menu, BorderLayout.CENTER);
 
@@ -153,9 +155,37 @@ public class UserInterface extends JFrame implements ActionListener {
         new AboutDialog();
     }
 
+    private void importBoard() {
+        File saveDir = new File("saves");
+        JFileChooser chooser = new JFileChooser(saveDir);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setDialogTitle("Load Readerboard Savestate");
+        chooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                } else {
+                    String filename = f.getName().toLowerCase();
+                    return filename.endsWith(".rb");
+                }
+            }
+
+            @Override
+            public String getDescription() {
+                return "Readerboard Save Files (*.rb)";
+            }
+        });
+
+        chooser.showOpenDialog(this);
+    }
+
     //@Override
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()) {
+            case "import":
+                importBoard();
+                break;
             case "about":
                 aboutDialog();
                 break;

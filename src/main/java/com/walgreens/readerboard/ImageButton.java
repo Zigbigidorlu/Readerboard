@@ -23,8 +23,13 @@ public class ImageButton extends JButton {
 
         try {
             URL iconUrl = getClass().getClassLoader().getResource("icons/" + icon);
-            ImageIcon ico = new ImageIcon(ImageIO.read(iconUrl));
-            setIcon(ico);
+            if(iconUrl != null) {
+                ImageIcon ico = new ImageIcon(ImageIO.read(iconUrl));
+                setIcon(ico);
+            }
+            else {
+                Debug.log("Icon does not exist: " + icon);
+            }
         }
         catch (IOException e) {
             // Leave blank

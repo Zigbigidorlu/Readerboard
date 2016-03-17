@@ -78,7 +78,8 @@ public class AboutDialog extends JDialog implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         if(e.getClickCount() == 7) {
-            System.out.println("Developer console");
+            Debug.console();
+            dispose();
         }
     }
 

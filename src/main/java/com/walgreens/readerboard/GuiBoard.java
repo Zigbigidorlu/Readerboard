@@ -23,7 +23,7 @@ public class GuiBoard extends JPanel {
                                 'k','l','m','n','o','p','q','r','s','t',
                                 'u','v','w','x','y','z','1','2','3','4',
                                 '5','6','7','8','9','0','$','.',',','\'',
-                                ':','!','/','?','&',' '};
+                                ':','!','/','?','&','%',' '};
     static Color board_default     = new Color(215,225,225);
 
     GuiBoard() {
@@ -90,20 +90,20 @@ public class GuiBoard extends JPanel {
             char character = Character.toLowerCase(e.getKeyChar());
             if (filterList.contains(character)) {
                 if(panel.addChar(character)) {
-                    System.out.println("Added Successfully");
+                    Debug.log("Added char: " + character);
                 }
                 else {
-                    System.err.println("Failed to add");
+                    Debug.log("Could not add char: " + character);
                 }
             }
 
             // Backspace key
             else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                 if(panel.delChar()) {
-                    System.out.println("Removed Successfully");
+                    Debug.log("Removed char");
                 }
                 else {
-                    System.err.println("Failed to remove");
+                    Debug.log("Could not remove char");
                 }
             }
 
@@ -118,7 +118,7 @@ public class GuiBoard extends JPanel {
             }
 
             else {
-                System.err.println("Bad Char: " + e.getKeyChar());
+                Debug.log("Invalid char: " + e.getKeyChar());
             }
         }
 

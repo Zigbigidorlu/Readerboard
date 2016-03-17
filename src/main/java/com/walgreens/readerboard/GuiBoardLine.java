@@ -51,9 +51,11 @@ public class GuiBoardLine extends JPanel {
         // Load font
         try {
             URL fontPath = getClass().getClassLoader().getResource("Evogria.ttf");
-            File fontFile = new File(fontPath.toURI());
-            Font coreFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-            font = coreFont.deriveFont(26f);
+            if (fontPath != null) {
+                File fontFile = new File(fontPath.toURI());
+                Font coreFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+                font = coreFont.deriveFont(26f);
+            }
         }
         catch(FontFormatException | IOException | URISyntaxException e) {
             new CrashHandler(e);
@@ -69,8 +71,21 @@ public class GuiBoardLine extends JPanel {
         }
     }
 
+    double messageSize() {
+        double count = 0.0;
+        for(char character : message) {
+            if(character == ' ') {
+                count = count + 0.3;
+            }
+            else {
+                count++;
+            }
+        }
+        return count;
+    }
+
     boolean addChar(char character) {
-        if(message.size() < Main.maxLength) {
+        if(messageSize() + 1 < Main.maxLength) {
             message.add(character);
             CharBlock block = new CharBlock(character);
             add(block);
@@ -99,16 +114,10 @@ public class GuiBoardLine extends JPanel {
         repaint();
     }
 
-    void change(CharBlock block, Character character) {
-        block.put(character);
-    }
-
     private class CharBlock extends JPanel implements MouseListener, KeyListener {
         Color color;
         CharBlock(Character character) {
             put(character);
-            //addMouseListener(this);
-            //addKeyListener(this);
         }
 
         void put(Character character) {
@@ -117,17 +126,18 @@ public class GuiBoardLine extends JPanel {
         }
 
         void put(String c) {
+            boolean isSpace = c.equals(" ");
             color = (StringUtils.isNumeric(c)) ? Color.RED : Color.BLACK;
-            Dimension size = new Dimension(30,40);
+            Dimension size = new Dimension((isSpace) ? 10 : 30,40);
             setPreferredSize(size);
             setMinimumSize(size);
             setMaximumSize(size);
-            setOpaque(!c.equals(" "));
+            setOpaque(!isSpace);
             setBackground(new Color(255,255,255,85));
 
             Color highlight = new Color(196,206,207);
             Color shadow = new Color(176,186,187);
-            setBorder(c.equals(" ") ? new EmptyBorder(0,0,0,0) : new CompoundBorder(
+            setBorder(isSpace ? new EmptyBorder(0,0,0,0) : new CompoundBorder(
                     BorderFactory.createMatteBorder(1,1,0,0,highlight),
                     BorderFactory.createMatteBorder(0,0,1,1,shadow)
             ));
