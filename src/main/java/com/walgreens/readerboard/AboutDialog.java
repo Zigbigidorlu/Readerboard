@@ -15,7 +15,7 @@ import java.awt.event.MouseListener;
  * @author Adam Treadway
  * @since 2/24/2016
  */
-public class AboutDialog extends JDialog implements MouseListener {
+class AboutDialog extends JDialog implements MouseListener {
     AboutDialog() {
         setTitle("About " + Main.name);
         setResizable(false);

@@ -13,10 +13,10 @@ import java.util.ArrayList;
  * @author Adam Treadway
  * @since 3/15/2016
  */
-public class Debug {
-    static JPanel contents;
-    static ArrayList<StackTraceElement[]> traceElements;
-    static ArrayList<String> log;
+class Debug {
+    private static JPanel contents;
+    private static final ArrayList<StackTraceElement[]> traceElements;
+    private static final ArrayList<String> log;
 
     static {
         traceElements = new ArrayList<>();
@@ -54,7 +54,7 @@ public class Debug {
         debugConsole.setVisible(true);
     }
 
-    static void addLogElement(String message, StackTraceElement[] trace) {
+    private static void addLogElement(String message, StackTraceElement[] trace) {
         JLabel element = new JLabel(message);
         contents.add(element);
         contents.revalidate();

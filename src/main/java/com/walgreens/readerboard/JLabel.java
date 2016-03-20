@@ -12,7 +12,7 @@ import java.awt.*;
  * @author Adam Treadway
  * @since 2/27/2016
  */
-public class JLabel extends javax.swing.JLabel {
+class JLabel extends javax.swing.JLabel {
     public JLabel(String str) {
         super(str);
         setFont(new Font("Segoe UI",Font.PLAIN, 12));

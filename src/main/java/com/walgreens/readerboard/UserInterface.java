@@ -23,12 +23,12 @@ import java.util.List;
  * @author Adam Treadway
  * @since 2/22/2016
  */
-public class UserInterface extends JFrame implements ActionListener {
-    JPanel contents;
-    GuiBoard guiBoard;
-    static Color wagRed = new Color(229,24,55);
-    static Color background = Color.WHITE;
-    static List<Image> icons = new ArrayList<>();
+class UserInterface extends JFrame implements ActionListener {
+    private JPanel contents;
+    private GuiBoard guiBoard;
+    static final Color wagRed = new Color(229,24,55);
+    static final Color background = Color.WHITE;
+    static final List<Image> icons = new ArrayList<>();
 
     UserInterface() {
         // Set icon/s

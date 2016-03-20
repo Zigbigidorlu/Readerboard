@@ -15,7 +15,7 @@ import java.util.List;
  * @since 2/22/2016
  */
 public class SaveState implements Serializable {
-    public List<Board> boards;
+    private final List<Board> boards;
     SaveState() {
         boards = new ArrayList<>();
     }

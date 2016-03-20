@@ -17,21 +17,21 @@ import java.util.Properties;
  */
 public class Main {
     private Ini ini;
-    static SaveState savestate;
-    static int boardCount, lineCount, maxLength;
+    private int boardCount;
+    static int lineCount, maxLength;
     static String name, version;
 
-    private int
-            default_boardCount = 4,
-            default_lineCount = 4,
-            default_maxLength = 16;
+    private final int
+            default_boardCount = 4;
+    private final int default_lineCount = 4;
+    private final int default_maxLength = 16;
 
     // Initialize class
     public static void main(String[] args) {
         new Main();
     }
 
-    Main() {
+    private Main() {
         // Set look and feel of swing windows
         try {
             UIManager.setLookAndFeel(
@@ -114,7 +114,7 @@ public class Main {
     }
 
     private void loadSaveState() throws IOException, ClassNotFoundException {
-        savestate = new SaveState().load(boardCount);
+        SaveState savestate = new SaveState().load(boardCount);
     }
 
     private void startGUI() {

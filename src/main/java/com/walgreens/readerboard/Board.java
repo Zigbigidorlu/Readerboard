@@ -11,9 +11,9 @@ import java.io.Serializable;
  * @author Adam Treadway
  * @since 2/22/2016
  */
-public class Board implements Serializable {
-    public String name;
-    public char[] message;
+class Board implements Serializable {
+    private final String name;
+    private char[] message;
     Board(String name) {
         this.name = name;
     }

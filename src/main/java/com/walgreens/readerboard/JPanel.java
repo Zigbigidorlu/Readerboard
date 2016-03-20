@@ -16,7 +16,7 @@ import java.net.URL;
  * @author Adam Treadway
  * @since 2/23/2016
  */
-public class JPanel extends javax.swing.JPanel {
+class JPanel extends javax.swing.JPanel {
     JPanel() {
         super();
         setOpaque(false);
@@ -32,9 +32,11 @@ public class JPanel extends javax.swing.JPanel {
 
         try {
             URL iconUrl = getClass().getClassLoader().getResource("icons/" + icon);
-            ImageIcon ico = new ImageIcon(ImageIO.read(iconUrl));
-            JLabel image = new JLabel(ico);
-            add(image);
+            if(iconUrl != null) {
+                ImageIcon ico = new ImageIcon(ImageIO.read(iconUrl));
+                JLabel image = new JLabel(ico);
+                add(image);
+            }
         }
         catch (IOException e) {
             // Leave blank

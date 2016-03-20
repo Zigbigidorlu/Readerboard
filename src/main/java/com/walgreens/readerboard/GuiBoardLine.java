@@ -10,10 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +24,9 @@ import java.util.List;
  * @author Adam Treadway
  * @since 3/5/2016
  */
-public class GuiBoardLine extends JPanel {
-    Font font;
-    List<Character> message;
-    GridBagConstraints constraints;
+class GuiBoardLine extends JPanel {
+    private Font font;
+    private final List<Character> message;
 
     GuiBoardLine(String contents) {
         super();
@@ -43,21 +40,19 @@ public class GuiBoardLine extends JPanel {
 
         // Set layout
         setLayout(new GridBagLayout());
-        constraints = new GridBagConstraints();
 
         // Set border
         setBorder(BorderFactory.createLineBorder(new Color(176,186,187),2));
 
         // Load font
         try {
-            URL fontPath = getClass().getClassLoader().getResource("Evogria.ttf");
-            if (fontPath != null) {
-                File fontFile = new File(fontPath.toURI());
-                Font coreFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("Evogria.ttf");
+            if (fontStream != null) {
+                Font coreFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
                 font = coreFont.deriveFont(26f);
             }
         }
-        catch(FontFormatException | IOException | URISyntaxException e) {
+        catch(FontFormatException | IOException e) {
             new CrashHandler(e);
         }
 
@@ -71,7 +66,7 @@ public class GuiBoardLine extends JPanel {
         }
     }
 
-    double messageSize() {
+    private double messageSize() {
         double count = 0.0;
         for(char character : message) {
             if(character == ' ') {
@@ -155,8 +150,8 @@ public class GuiBoardLine extends JPanel {
         public void mouseClicked(MouseEvent e) {
             if(e.getClickCount() == 2) {
                 Color focus = new Color((GuiBoard.board_default.getRed() + 20),
-                        (GuiBoard.board_default.getGreen()),
-                        (GuiBoard.board_default.getBlue())
+                        (GuiBoard.board_default.getGreen() -15),
+                        (GuiBoard.board_default.getBlue() + 15)
                 );
                 setBackground(focus);
                 grabFocus();

@@ -20,7 +20,7 @@ import java.awt.event.WindowEvent;
  * @author Adam Treadway
  * @since 2/22/2016
  */
-public class CrashHandler extends JDialog {
+class CrashHandler extends JDialog {
     CrashHandler(Exception e) {
         // Set properties
         setTitle(Main.name + " has crashed!");

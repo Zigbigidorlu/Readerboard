@@ -23,7 +23,7 @@ import java.util.Hashtable;
  * @author Adam Treadway
  * @since 3/5/2016
  */
-public class QRBlockDialog extends JDialog {
+class QRBlockDialog extends JDialog {
     QRBlockDialog() {
         setTitle("QR Quick Export");
         setResizable(false);

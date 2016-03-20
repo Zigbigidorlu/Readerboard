@@ -17,8 +17,8 @@ import java.net.URL;
  * @author Adam Treadway
  * @since 2/23/2016
  */
-public class ImageButton extends JButton {
-    public ImageButton(String text, String icon) {
+class ImageButton extends JButton {
+    private ImageButton(String text, String icon) {
         super("<HTML><CENTER>" + text + "</CENTER></HTML>");
 
         try {
@@ -44,7 +44,7 @@ public class ImageButton extends JButton {
         setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
-    public ImageButton(String text, Color foreground, String icon) {
+    private ImageButton(String text, Color foreground, String icon) {
         this(text, icon);
         setForeground(foreground);
     }

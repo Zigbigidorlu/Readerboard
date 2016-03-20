@@ -17,14 +17,9 @@ import java.util.List;
  * @author Adam Treadway
  * @since 3/1/2016
  */
-public class GuiBoard extends JPanel {
+class GuiBoard extends JPanel {
     final static List<Character> filterList = new ArrayList<>();
-    private char[] filter = {   'a','b','c','d','e','f','g','h','i','j',
-                                'k','l','m','n','o','p','q','r','s','t',
-                                'u','v','w','x','y','z','1','2','3','4',
-                                '5','6','7','8','9','0','$','.',',','\'',
-                                ':','!','/','?','&','%',' '};
-    static Color board_default     = new Color(215,225,225);
+    static final Color board_default     = new Color(225,235,235);
 
     GuiBoard() {
         super();
@@ -45,6 +40,11 @@ public class GuiBoard extends JPanel {
         });
 
         // Build filter list
+        char[] filter = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+                'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4',
+                '5', '6', '7', '8', '9', '0', '$', '.', ',', '\'',
+                ':', '!', '/', '?', '&', '%', ' '};
         for (char aFilter : filter) {
             filterList.add(aFilter);
         }
@@ -52,7 +52,7 @@ public class GuiBoard extends JPanel {
         createBoardGui();
     }
 
-    void createBoardGui() {
+    private void createBoardGui() {
         JPanel decor = new JPanel();
         decor.setLayout(new BoxLayout(decor, BoxLayout.Y_AXIS));
         decor.setBackground(board_default);
@@ -79,8 +79,8 @@ public class GuiBoard extends JPanel {
         add(decor);
     }
 
-    class KeyEventListener implements KeyListener {
-        GuiBoardLine panel;
+    private class KeyEventListener implements KeyListener {
+        final GuiBoardLine panel;
         KeyEventListener(GuiBoardLine panel) {
             this.panel = panel;
         }
@@ -126,8 +126,8 @@ public class GuiBoard extends JPanel {
         @Override public void keyPressed(KeyEvent e) {}
     }
 
-    class MouseEventListener implements MouseListener {
-        JPanel panel;
+    private class MouseEventListener implements MouseListener {
+        final JPanel panel;
         MouseEventListener(JPanel panel) {
             this.panel = panel;
         }
@@ -156,8 +156,8 @@ public class GuiBoard extends JPanel {
         @Override public void mouseReleased(MouseEvent e) {}
     }
 
-    class FocusEventListener implements FocusListener {
-        JPanel panel;
+    private class FocusEventListener implements FocusListener {
+        final JPanel panel;
         FocusEventListener(JPanel panel) {
             this.panel = panel;
         }
@@ -170,7 +170,7 @@ public class GuiBoard extends JPanel {
         @Override public void focusGained(FocusEvent e) {
             Color focus = new Color((board_default.getRed() + 20),
                     (board_default.getGreen() + 20),
-                    (board_default.getBlue() + 20)
+                    (board_default.getBlue() + 10)
             );
             panel.setBackground(focus);
         }
