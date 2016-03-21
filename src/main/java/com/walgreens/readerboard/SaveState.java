@@ -14,18 +14,17 @@ import java.util.List;
  * @author Adam Treadway
  * @since 2/22/2016
  */
-public class SaveState implements Serializable {
-    private final List<Board> boards;
+class SaveState implements Serializable {
+    static final long serialVersionUID = 1000L;
+    
+    private int default_board = 0;
+    private int week, year;
+    final List<Board> boards;
     SaveState() {
         boards = new ArrayList<>();
     }
 
-    public SaveState load(int boardCount) throws IOException, ClassNotFoundException {
-        // Build file name based on week
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int week = calendar.get(Calendar.WEEK_OF_YEAR);
-
+    SaveState load() throws IOException, ClassNotFoundException {
         File dir = new File("saves");
         File[] files = dir.listFiles(File::isFile);
 
@@ -51,22 +50,37 @@ public class SaveState implements Serializable {
                 throw new IOException("Unable to write save state directory");
             }
 
-            // Make save file
-            File f = new File("saves/" + year + "." + week + ".rb");
-            if (f.createNewFile()) {
-                for (int i = 0; i < boardCount; i++) {
-                    boards.add(new Board("Untitled Board"));
+            // Build dummy boards
+            for (int i = 0; i < Main.boardCount; i++) {
+                Board b = new Board("Untitled Board");
+                for(int j = 0; j < Main.lineCount; j++) {
+                    String message = "Default Message";
+                    b.messages.add(message.toCharArray());
                 }
-
-                FileOutputStream out = new FileOutputStream(f);
-                ObjectOutputStream oos = new ObjectOutputStream(out);
-                oos.writeObject(this);
-
-                return this;
+                boards.add(b);
             }
-            else {
-                throw new IOException("Unable to write save state");
-            }
+
+            return save();
+        }
+    }
+
+    SaveState save() throws IOException {
+        // Build file name based on week
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int week = calendar.get(Calendar.WEEK_OF_YEAR);
+
+        // Make save file
+        File f = new File("saves/" + year + "." + week + ".rb");
+        if (f.createNewFile()) {
+            FileOutputStream out = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            oos.writeObject(this);
+
+            return this;
+        }
+        else {
+            throw new IOException("Unable to write save state");
         }
     }
 }

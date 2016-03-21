@@ -19,7 +19,7 @@ import java.net.URL;
  */
 class ImageButton extends JButton {
     private ImageButton(String text, String icon) {
-        super("<HTML><CENTER>" + text + "</CENTER></HTML>");
+        super((text != null) ? "<HTML><CENTER>" + text + "</CENTER></HTML>" : "");
 
         try {
             URL iconUrl = getClass().getClassLoader().getResource("icons/" + icon);
@@ -49,8 +49,14 @@ class ImageButton extends JButton {
         setForeground(foreground);
     }
 
-    public ImageButton(String text, Color foreground, String icon, ActionListener actionListener, String actionCommand) {
+    ImageButton(String text, Color foreground, String icon, ActionListener actionListener, String actionCommand) {
         this(text, foreground, icon);
+        addActionListener(actionListener);
+        setActionCommand(actionCommand);
+    }
+
+    ImageButton(Color foreground, String icon, ActionListener actionListener, String actionCommand) {
+        this(null, foreground, icon);
         addActionListener(actionListener);
         setActionCommand(actionCommand);
     }

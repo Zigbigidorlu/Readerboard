@@ -1,6 +1,7 @@
 package com.walgreens.readerboard;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Readerboard
@@ -12,17 +13,10 @@ import java.io.Serializable;
  * @since 2/22/2016
  */
 class Board implements Serializable {
-    private final String name;
-    private char[] message;
+    String name;
+    ArrayList<char[]> messages;
     Board(String name) {
         this.name = name;
-    }
-
-    void setMessage(String message) {
-        this.message = message.toCharArray();
-    }
-
-    char[] getMessage() {
-        return message;
+        this.messages = new ArrayList<>();
     }
 }

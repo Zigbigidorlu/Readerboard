@@ -13,17 +13,17 @@ import java.awt.*;
  * @since 2/27/2016
  */
 class JLabel extends javax.swing.JLabel {
-    public JLabel(String str) {
+    JLabel(String str) {
         super(str);
         setFont(new Font("Segoe UI",Font.PLAIN, 12));
         setSize(getPreferredSize());
     }
 
-    public JLabel(ImageIcon imageIcon) {
+    JLabel(ImageIcon imageIcon) {
         super(imageIcon);
     }
 
-    public JLabel(String str, int pos) {
+    JLabel(String str, int pos) {
         this(str);
         setHorizontalAlignment(pos);
     }

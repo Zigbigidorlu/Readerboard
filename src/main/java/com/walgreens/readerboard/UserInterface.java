@@ -26,11 +26,15 @@ import java.util.List;
 class UserInterface extends JFrame implements ActionListener {
     private JPanel contents;
     private GuiBoard guiBoard;
+    private SaveState saveState;
     static final Color wagRed = new Color(229,24,55);
     static final Color background = Color.WHITE;
     static final List<Image> icons = new ArrayList<>();
 
-    UserInterface() {
+    UserInterface(SaveState saveState) {
+        // Set SaveState
+        this.saveState = saveState;
+
         // Set icon/s
         try {
             ClassLoader loader = getClass().getClassLoader();
@@ -59,7 +63,7 @@ class UserInterface extends JFrame implements ActionListener {
         setResizable(false);
 
         // Set dimensions
-        Dimension dimension = new Dimension(600,450);
+        Dimension dimension = new Dimension(Main.windowWidth, Main.windowHeight);
         setPreferredSize(dimension);
 
         // Pack elements
@@ -90,7 +94,7 @@ class UserInterface extends JFrame implements ActionListener {
         view.add(contents, BorderLayout.CENTER);
 
         // Build initial GUI board (TODO: Replace with listing)
-        guiBoard = new GuiBoard();
+        guiBoard = new GuiBoard(saveState.boards.get(0));
         contents.add(guiBoard);
 
         // Put contents in frame

@@ -17,14 +17,20 @@ import java.util.List;
  * @author Adam Treadway
  * @since 3/1/2016
  */
-class GuiBoard extends JPanel {
+class GuiBoard extends JPanel implements ActionListener {
+    private Board board;
     final static List<Character> filterList = new ArrayList<>();
-    static final Color board_default     = new Color(225,235,235);
+    static final Color board_default = new Color(225,235,235);
 
-    GuiBoard() {
+    GuiBoard(Board board) {
         super();
+
+        // Set the board
+        this.board = board;
+
         setFocusable(true);
         setFocusCycleRoot(true);
+        setLayout(new BorderLayout());
 
         // Allow focus loss on fields
         addMouseListener(new MouseListener() {
@@ -49,10 +55,63 @@ class GuiBoard extends JPanel {
             filterList.add(aFilter);
         }
 
-        createBoardGui();
+        buildGui();
     }
 
-    private void createBoardGui() {
+    private void buildGui() {
+        add(buildToolbar(), BorderLayout.NORTH);
+        add(createBoardGui(), BorderLayout.CENTER);
+    }
+
+    private JToolBar buildToolbar() {
+        JToolBar toolbar = new JToolBar();
+        toolbar.setFloatable(false);
+        toolbar.setOpaque(false);
+        Dimension dimension = new Dimension();
+        dimension.height = 52;
+        toolbar.setPreferredSize(dimension);
+        toolbar.setBorder(new EmptyBorder(3,5,3,5));
+
+        JPanel contents = new JPanel();
+        contents.setLayout(new BorderLayout());
+        toolbar.add(contents);
+
+        JPanel nameMenu = new JPanel();
+        nameMenu.setLayout(new BoxLayout(nameMenu, BoxLayout.X_AXIS));
+        contents.add(nameMenu, BorderLayout.WEST);
+
+        JLabel name = new JLabel(board.name);
+        Font font = name.getFont();
+        Font newFont = font.deriveFont(Font.BOLD, 18);
+        name.setFont(newFont);
+        name.setBorder(new EmptyBorder(0,0,0,6));
+        nameMenu.add(name);
+
+        ImageButton rename = new ImageButton(Color.BLACK,"rename.png",this,"rename");
+        rename.setToolTipText("Rename Board");
+        nameMenu.add(rename);
+
+        ImageButton def = new ImageButton(Color.BLACK,"default.png",this,"default");
+        def.setToolTipText("Set as default board");
+        nameMenu.add(def);
+
+        JPanel actions = new JPanel();
+        contents.add(actions,BorderLayout.EAST);
+
+        ImageButton save = new ImageButton(Color.BLACK,"save.png",this,"save");
+        save.setToolTipText("Save messages");
+        actions.add(save);
+
+        ImageButton clear = new ImageButton(Color.BLACK,"clear.png",this,"clear");
+        clear.setToolTipText("Clear board");
+        actions.add(clear);
+
+        return toolbar;
+    }
+
+    private JPanel createBoardGui() {
+        JPanel boardPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
         JPanel decor = new JPanel();
         decor.setLayout(new BoxLayout(decor, BoxLayout.Y_AXIS));
         decor.setBackground(board_default);
@@ -68,15 +127,29 @@ class GuiBoard extends JPanel {
                 )
         );
 
-        for(int i = 0; i < Main.lineCount; i++) {
-            GuiBoardLine line = new GuiBoardLine("Foo 123! Bingo.");
+        // If messages is null, build some default
+        if(board.messages.size() == 0) {
+            for(int i = 0; i < Main.lineCount; i++) {
+                String message = "Default Message";
+                board.messages.add(message.toCharArray());
+            }
+        }
+
+        for (int i = 0; i < board.messages.size(); i++) {
+            GuiBoardLine line = new GuiBoardLine(new String(board.messages.get(i)));
             line.addKeyListener(new KeyEventListener(line));
             line.addMouseListener(new MouseEventListener(line));
             line.addFocusListener(new FocusEventListener(line));
             decor.add(line);
         }
 
-        add(decor);
+        boardPanel.add(decor, gbc);
+        return boardPanel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 
     private class KeyEventListener implements KeyListener {

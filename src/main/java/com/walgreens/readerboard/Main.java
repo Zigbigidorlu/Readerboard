@@ -3,7 +3,8 @@ package com.walgreens.readerboard;
 import org.ini4j.Ini;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -17,14 +18,19 @@ import java.util.Properties;
  */
 public class Main {
     private Ini ini;
-    private int boardCount;
-    static int lineCount, maxLength;
+    static int boardCount, lineCount, maxLength, windowWidth, windowHeight;
     static String name, version;
 
-    private final int
-            default_boardCount = 4;
-    private final int default_lineCount = 4;
-    private final int default_maxLength = 16;
+    static final int    default_boardCount, default_lineCount, default_maxLength,
+                        default_windowWidth, default_windowHeight;
+
+    static {
+        default_boardCount = 4;
+        default_lineCount = 4;
+        default_maxLength = 16;
+        default_windowWidth = 600;
+        default_windowHeight = 375;
+    }
 
     // Initialize class
     public static void main(String[] args) {
@@ -49,7 +55,6 @@ public class Main {
         try {
             getProperties();
             loadINI();
-            loadSaveState();
             startGUI();
         }
         catch (IOException|ClassNotFoundException e) {
@@ -76,6 +81,12 @@ public class Main {
 
             // Load variables into memory
             Ini.Section section = ini.get("Config");
+            windowWidth = Integer.parseInt(
+                    section.getOrDefault("gui.window_width",String.valueOf(default_windowWidth))
+            );
+            windowHeight = Integer.parseInt(
+                    section.getOrDefault("gui.window_height",String.valueOf(default_windowHeight))
+            );
             boardCount = Integer.parseInt(
                     section.getOrDefault("rb.boards_count",String.valueOf(default_boardCount))
             );
@@ -103,6 +114,8 @@ public class Main {
 
             // Write ini file contents
             ini = new Ini(file);
+            ini.put("Config","gui.window_width",default_windowWidth);
+            ini.put("Config","gui.window_height",default_windowHeight);
             ini.put("Config","rb.boards_count",default_boardCount);
             ini.put("Config","rb.lines_per_board",default_lineCount);
             ini.put("Config","rb.max_length",default_maxLength);
@@ -113,11 +126,8 @@ public class Main {
         }
     }
 
-    private void loadSaveState() throws IOException, ClassNotFoundException {
-        SaveState savestate = new SaveState().load(boardCount);
-    }
-
-    private void startGUI() {
-        new UserInterface();
+    private void startGUI() throws IOException, ClassNotFoundException {
+        SaveState savestate = new SaveState().load();
+        new UserInterface(savestate);
     }
 }
