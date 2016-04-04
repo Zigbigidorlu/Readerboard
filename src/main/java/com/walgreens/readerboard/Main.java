@@ -18,11 +18,14 @@ import java.util.Properties;
  */
 public class Main {
     private Ini ini;
+    private SaveState saveState;
+
+    // Global variables
     static int boardCount, lineCount, maxLength, windowWidth, windowHeight;
     static String name, version;
 
-    static final int    default_boardCount, default_lineCount, default_maxLength,
-                        default_windowWidth, default_windowHeight;
+    private static final int    default_boardCount, default_lineCount, default_maxLength,
+                                default_windowWidth, default_windowHeight;
 
     static {
         default_boardCount = 4;
@@ -127,7 +130,7 @@ public class Main {
     }
 
     private void startGUI() throws IOException, ClassNotFoundException {
-        SaveState savestate = new SaveState().load();
-        new UserInterface(savestate);
+        saveState = new SaveState().load();
+        new UserInterface(saveState);
     }
 }

@@ -181,7 +181,12 @@ class UserInterface extends JFrame implements ActionListener {
             }
         });
 
-        chooser.showOpenDialog(this);
+        int result = chooser.showOpenDialog(this);
+
+        // Load readerboard file
+        if(result == JFileChooser.APPROVE_OPTION) {
+
+        }
     }
 
     //@Override

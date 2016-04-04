@@ -24,10 +24,21 @@ class SaveState implements Serializable {
         boards = new ArrayList<>();
     }
 
+
+
     SaveState load() throws IOException, ClassNotFoundException {
+        // Get saves directory
         File dir = new File("saves");
+
+        // Make save directory if it doesn't exist
+        if(!dir.exists() && !dir.mkdirs()) {
+            throw new IOException("Unable to write save state directory");
+        }
+
+        // Get listing of files
         File[] files = dir.listFiles(File::isFile);
 
+        // Find the most recently modified file
         long lastMod = Long.MIN_VALUE;
         File file = null;
         if(files != null) {
@@ -39,17 +50,16 @@ class SaveState implements Serializable {
             }
         }
 
+        return load(file);
+    }
+
+    SaveState load(File file) throws IOException, ClassNotFoundException {
         if(file != null && file.exists()) {
             FileInputStream in = new FileInputStream(file);
             ObjectInputStream oin = new ObjectInputStream(in);
             return (SaveState) oin.readObject();
         }
         else {
-            // Make save directory
-            if(!dir.exists() && !dir.mkdirs()) {
-                throw new IOException("Unable to write save state directory");
-            }
-
             // Build dummy boards
             for (int i = 0; i < Main.boardCount; i++) {
                 Board b = new Board("Untitled Board");

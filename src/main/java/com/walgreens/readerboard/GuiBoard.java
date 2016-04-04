@@ -162,21 +162,15 @@ class GuiBoard extends JPanel implements ActionListener {
         public void keyReleased(KeyEvent e) {
             char character = Character.toLowerCase(e.getKeyChar());
             if (filterList.contains(character)) {
-                if(panel.addChar(character)) {
-                    Debug.log("Added char: " + character);
-                }
-                else {
-                    Debug.log("Could not add char: " + character);
+                if(!panel.addChar(character)) {
+                    Debug.log("Character not added, limit exceeded");
                 }
             }
 
             // Backspace key
             else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                if(panel.delChar()) {
-                    Debug.log("Removed char");
-                }
-                else {
-                    Debug.log("Could not remove char");
+                if(!panel.delChar()) {
+                    Debug.log("Character deletion error");
                 }
             }
 
@@ -191,7 +185,7 @@ class GuiBoard extends JPanel implements ActionListener {
             }
 
             else {
-                Debug.log("Invalid char: " + e.getKeyChar());
+                Debug.log("Invalid character: " + e.getKeyChar());
             }
         }
 
