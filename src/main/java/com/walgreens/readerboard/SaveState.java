@@ -16,15 +16,13 @@ import java.util.List;
  */
 class SaveState implements Serializable {
     static final long serialVersionUID = 1000L;
-    
-    private int default_board = 0;
+
     private int week, year;
+    int default_board = 0;
     final List<Board> boards;
     SaveState() {
         boards = new ArrayList<>();
     }
-
-
 
     SaveState load() throws IOException, ClassNotFoundException {
         // Get saves directory
@@ -35,22 +33,29 @@ class SaveState implements Serializable {
             throw new IOException("Unable to write save state directory");
         }
 
+        // Find the most recently modified file (this week's)
+        File file = getRecent(dir);
+
+        return load(file);
+    }
+
+    File getRecent(File dir) {
         // Get listing of files
         File[] files = dir.listFiles(File::isFile);
 
-        // Find the most recently modified file
-        long lastMod = Long.MIN_VALUE;
         File file = null;
-        if(files != null) {
+        long lastMod = Long.MIN_VALUE;
+        if (files != null) {
             for (File f : files) {
                 if (f.lastModified() > lastMod) {
-                    file = f;
-                    lastMod = f.lastModified();
+                    if (f.getName().endsWith(".rb")) {
+                        file = f;
+                        lastMod = f.lastModified();
+                    }
                 }
             }
         }
-
-        return load(file);
+        return file;
     }
 
     SaveState load(File file) throws IOException, ClassNotFoundException {
@@ -77,12 +82,12 @@ class SaveState implements Serializable {
     SaveState save() throws IOException {
         // Build file name based on week
         Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int week = calendar.get(Calendar.WEEK_OF_YEAR);
+        year = calendar.get(Calendar.YEAR);
+        week = calendar.get(Calendar.WEEK_OF_YEAR);
 
         // Make save file
         File f = new File("saves/" + year + "." + week + ".rb");
-        if (f.createNewFile()) {
+        if (f.exists() || f.createNewFile()) {
             FileOutputStream out = new FileOutputStream(f);
             ObjectOutputStream oos = new ObjectOutputStream(out);
             oos.writeObject(this);
@@ -92,5 +97,10 @@ class SaveState implements Serializable {
         else {
             throw new IOException("Unable to write save state");
         }
+    }
+
+    void setDefault(Board board) throws IOException {
+        default_board = boards.indexOf(board);
+        save();
     }
 }

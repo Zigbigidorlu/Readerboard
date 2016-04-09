@@ -1,5 +1,6 @@
 package com.walgreens.readerboard;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -107,6 +108,11 @@ class GuiBoardLine extends JPanel {
         removeAll();
         revalidate();
         repaint();
+    }
+
+    char[] get() {
+        Character[] characters = message.toArray(new Character[message.size()]);
+        return ArrayUtils.toPrimitive(characters);
     }
 
     private class CharBlock extends JPanel implements MouseListener, KeyListener {

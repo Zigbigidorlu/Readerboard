@@ -3,6 +3,8 @@ package com.walgreens.readerboard;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -17,7 +19,7 @@ import java.net.URL;
  * @author Adam Treadway
  * @since 2/23/2016
  */
-class ImageButton extends JButton {
+class ImageButton extends JButton implements ChangeListener {
     private ImageButton(String text, String icon) {
         super((text != null) ? "<HTML><CENTER>" + text + "</CENTER></HTML>" : "");
 
@@ -42,6 +44,7 @@ class ImageButton extends JButton {
         setAlignmentX(Component.CENTER_ALIGNMENT);
         setBorder(new EmptyBorder(8,8,8,8));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
+        addChangeListener(this);
     }
 
     private ImageButton(String text, Color foreground, String icon) {
@@ -59,5 +62,12 @@ class ImageButton extends JButton {
         this(null, foreground, icon);
         addActionListener(actionListener);
         setActionCommand(actionCommand);
+    }
+
+    // TODO: Click color handling
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if (getModel().isPressed()) {
+        }
     }
 }

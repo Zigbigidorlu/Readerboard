@@ -8,6 +8,8 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -93,9 +95,10 @@ class UserInterface extends JFrame implements ActionListener {
         contents.setBorder(border);
         view.add(contents, BorderLayout.CENTER);
 
-        // Build initial GUI board (TODO: Replace with listing)
-        guiBoard = new GuiBoard(saveState.boards.get(0));
-        contents.add(guiBoard);
+        // Build initial GUI board, as defined by default
+        int default_board = (saveState.default_board <= saveState.boards.size()) ?
+                saveState.default_board : 0;
+        showBoard(default_board);
 
         // Put contents in frame
         add(view);
@@ -140,9 +143,15 @@ class UserInterface extends JFrame implements ActionListener {
 
         // Boards button
         JButton select = new ImageButton("Boards", Color.WHITE, "select.png", this, "select");
+        select.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                selectBoard(e);
+            }
+        });
         menu.add(select);
 
-        // QR Export button
+        // TODO: QR Export
         /*JButton qr = new ImageButton("Export", Color.WHITE, "qr.png", this, "qr");
         menu.add(qr);*/
 
@@ -185,11 +194,75 @@ class UserInterface extends JFrame implements ActionListener {
 
         // Load readerboard file
         if(result == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = chooser.getSelectedFile();
+                saveState = saveState.load(file);
 
+                int default_board = (saveState.default_board <= saveState.boards.size()) ?
+                        saveState.default_board : 0;
+                showBoard(default_board);
+            }
+
+            // If the file isn't a valid save, or corrupted
+            catch (ClassNotFoundException|IOException e) {
+                // Little alert sound
+                Toolkit.getDefaultToolkit().beep();
+
+                // Produce an error dialog
+                JOptionPane optionPane = new JOptionPane("File is invalid or corrupt.", JOptionPane.ERROR_MESSAGE);
+                JDialog dialog = optionPane.createDialog("Oops!");
+                dialog.setAlwaysOnTop(true);
+                dialog.setIconImages(icons);
+
+                dialog.setVisible(true);
+            }
         }
     }
 
-    //@Override
+    // TODO: Print
+    private void print() {}
+
+    private void selectBoard(MouseEvent e) {
+        JPopupMenu menu = new JPopupMenu();
+        for(int i = 0; i < saveState.boards.size(); i++) {
+            int index = i;
+            String name = saveState.boards.get(i).name;
+            JMenuItem item = new JMenuItem(new AbstractAction(name) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(guiBoard.isSaved()) {
+                        showBoard(index);
+                    }
+                    else {
+                        int doSave = JOptionPane.showConfirmDialog(UserInterface.this,
+                                "Board is not saved. Would you like to save it now?");
+                        if(doSave == 0) {
+                            guiBoard.save();
+                            showBoard(index);
+                        }
+                        else if(doSave == 1) {
+                            showBoard(index);
+                        }
+                    }
+                }
+            });
+            menu.add(item);
+        }
+
+        menu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    // Show board in the main area
+    private void showBoard(int board) {
+        board = (board <= saveState.boards.size()) ? board : 0;
+        guiBoard = new GuiBoard(saveState.boards.get(board), saveState);
+        contents.removeAll();
+        contents.invalidate();
+        contents.add(guiBoard);
+        contents.revalidate();
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()) {
             case "import":
@@ -197,6 +270,8 @@ class UserInterface extends JFrame implements ActionListener {
                 break;
             case "about":
                 aboutDialog();
+                break;
+            case "select":
                 break;
             case "qr":
                 new QRBlockDialog();

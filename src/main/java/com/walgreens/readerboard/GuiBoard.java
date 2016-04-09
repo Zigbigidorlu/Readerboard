@@ -5,7 +5,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,14 +21,20 @@ import java.util.List;
  */
 class GuiBoard extends JPanel implements ActionListener {
     private Board board;
+    private SaveState saveState;
+    private final List<GuiBoardLine> lines = new ArrayList<>();
     final static List<Character> filterList = new ArrayList<>();
     static final Color board_default = new Color(225,235,235);
+    private JLabel name;
 
-    GuiBoard(Board board) {
+    GuiBoard(Board board, SaveState saveState) {
         super();
 
         // Set the board
         this.board = board;
+
+        // Set the saveState
+        this.saveState = saveState;
 
         setFocusable(true);
         setFocusCycleRoot(true);
@@ -80,7 +88,7 @@ class GuiBoard extends JPanel implements ActionListener {
         nameMenu.setLayout(new BoxLayout(nameMenu, BoxLayout.X_AXIS));
         contents.add(nameMenu, BorderLayout.WEST);
 
-        JLabel name = new JLabel(board.name);
+        name = new JLabel(board.name);
         Font font = name.getFont();
         Font newFont = font.deriveFont(Font.BOLD, 18);
         name.setFont(newFont);
@@ -141,15 +149,84 @@ class GuiBoard extends JPanel implements ActionListener {
             line.addMouseListener(new MouseEventListener(line));
             line.addFocusListener(new FocusEventListener(line));
             decor.add(line);
+            lines.add(line);
         }
 
         boardPanel.add(decor, gbc);
         return boardPanel;
     }
 
+    void save() {
+        try {
+            ArrayList<char[]> messages = board.messages;
+            messages.clear();
+            for (GuiBoardLine line : lines) {
+                char[] characters = line.get();
+                messages.add(characters);
+            }
+            saveState.save();
+        }
+        catch (IOException e) {
+            new CrashHandler(e);
+        }
+    }
+
+    void clear() {
+        lines.forEach(GuiBoardLine::clear);
+    }
+
+    private void setDefault() {
+        try {
+            saveState.setDefault(board);
+        }
+        catch (IOException e) {
+            new CrashHandler(e);
+        }
+    }
+
+    private void rename() {
+        try {
+            String newName = JOptionPane.showInputDialog(this, "Input a new name for this board:");
+            if(newName != null && newName.trim().length() > 0) {
+                board.name = newName;
+                name.setText(board.name);
+                name.revalidate();
+                saveState.save();
+            }
+        }
+        catch (IOException e) {
+            new CrashHandler(e);
+        }
+    }
+
+    boolean isSaved() {
+        boolean isSaved = true;
+        ArrayList<char[]> messages = board.messages;
+        for (int i = 0; i < messages.size(); i++) {
+            char[] characters = lines.get(i).get();
+            if(!Arrays.equals(characters,messages.get(i))) {
+                isSaved = false;
+            }
+        }
+        return isSaved;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        switch(e.getActionCommand()) {
+            case "save":
+                save();
+                break;
+            case "clear":
+                clear();
+                break;
+            case "default":
+                setDefault();
+                break;
+            case "rename":
+                rename();
+                break;
+        }
     }
 
     private class KeyEventListener implements KeyListener {
