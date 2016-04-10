@@ -137,7 +137,7 @@ class UserInterface extends JFrame implements ActionListener {
         JPanel menu = new JPanel();
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         JButton save = new ImageButton("Import", Color.WHITE, "import.png", this, "import");
-        JButton print = new ImageButton("Print", Color.WHITE, "print.png", this, "print");
+        JButton print = new ImageButton("ComparisonPrinter", Color.WHITE, "print.png", this, "print");
         menu.add(save);
         menu.add(print);
 
@@ -219,8 +219,10 @@ class UserInterface extends JFrame implements ActionListener {
         }
     }
 
-    // TODO: Print
-    private void print() {}
+    // TODO: Compare and print
+    private void print() {
+        new ComparisonPrinter(saveState);
+    }
 
     private void selectBoard(MouseEvent e) {
         JPopupMenu menu = new JPopupMenu();
@@ -268,13 +270,16 @@ class UserInterface extends JFrame implements ActionListener {
             case "import":
                 importBoard();
                 break;
-            case "about":
-                aboutDialog();
+            case "print":
+                print();
                 break;
             case "select":
                 break;
             case "qr":
                 new QRBlockDialog();
+                break;
+            case "about":
+                aboutDialog();
                 break;
             default:
                 UnsupportedOperationException unsupported =

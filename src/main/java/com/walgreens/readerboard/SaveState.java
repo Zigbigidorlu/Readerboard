@@ -2,6 +2,7 @@ package com.walgreens.readerboard;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -40,21 +41,41 @@ class SaveState implements Serializable {
     }
 
     File getRecent(File dir) {
+        return getRecent(dir, false);
+    }
+
+    File getRecent(File dir, boolean lastWeek) {
+        File file = null;
+
         // Get listing of files
         File[] files = dir.listFiles(File::isFile);
 
-        File file = null;
-        long lastMod = Long.MIN_VALUE;
+        ArrayList<File> rbFiles = new ArrayList<>();
         if (files != null) {
+            // Build file listing with .rb extension
             for (File f : files) {
-                if (f.lastModified() > lastMod) {
-                    if (f.getName().endsWith(".rb")) {
-                        file = f;
-                        lastMod = f.lastModified();
-                    }
+                if (f.getName().endsWith(".rb")) {
+                    rbFiles.add(f);
+                }
+            }
+
+            // If files exist...
+            if(rbFiles.size() > 0) {
+                File[] fileList = rbFiles.toArray(new File[rbFiles.size()]);
+
+                // Sort files by last modified (most recent first)
+                Arrays.sort(fileList, (f1, f2) -> Long.valueOf(f2.lastModified()).compareTo(f1.lastModified()));
+
+                // Get file, last week if flagged.
+                if(fileList.length > 1) {
+                    file = fileList[lastWeek ? 1 : 0];
+                }
+                else {
+                    file = fileList[0];
                 }
             }
         }
+
         return file;
     }
 
@@ -102,5 +123,13 @@ class SaveState implements Serializable {
     void setDefault(Board board) throws IOException {
         default_board = boards.indexOf(board);
         save();
+    }
+
+    ArrayList<Character> getCharacters() {
+        ArrayList<Character> characters = new ArrayList<>();
+        for(Board board : boards) {
+            characters.addAll(board.getCharacters());
+        }
+        return characters;
     }
 }
