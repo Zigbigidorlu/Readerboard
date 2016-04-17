@@ -253,8 +253,9 @@ class UserInterface extends JFrame implements ActionListener {
 
     // Show board in the main area
     private void showBoard(int board) {
+        boolean isDefault = (board == saveState.default_board);
         board = (board <= saveState.boards.size()) ? board : 0;
-        guiBoard = new GuiBoard(saveState.boards.get(board), saveState);
+        guiBoard = new GuiBoard(saveState.boards.get(board), saveState, isDefault);
         contents.removeAll();
         contents.invalidate();
         contents.add(guiBoard);

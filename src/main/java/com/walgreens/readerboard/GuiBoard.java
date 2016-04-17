@@ -25,9 +25,11 @@ class GuiBoard extends JPanel implements ActionListener {
     private final List<GuiBoardLine> lines = new ArrayList<>();
     private Board board;
     private SaveState saveState;
+    private ImageButton def;
+    private boolean isDefault;
     private JLabel name;
 
-    GuiBoard(Board board, SaveState saveState) {
+    GuiBoard(Board board, SaveState saveState, boolean isDefault) {
         super();
 
         // Set the board
@@ -35,6 +37,9 @@ class GuiBoard extends JPanel implements ActionListener {
 
         // Set the saveState
         this.saveState = saveState;
+
+        // Set if default board
+        this.isDefault = isDefault;
 
         setFocusable(true);
         setFocusCycleRoot(true);
@@ -110,7 +115,8 @@ class GuiBoard extends JPanel implements ActionListener {
         rename.setToolTipText("Rename Board");
         nameMenu.add(rename);
 
-        ImageButton def = new ImageButton(Color.BLACK, "default.png", this, "default");
+        String def_icon = (isDefault) ? "default_sel.png" : "default.png";
+        def = new ImageButton(Color.BLACK, def_icon, this, "default");
         def.setToolTipText("Set as default board");
         nameMenu.add(def);
 
@@ -188,6 +194,7 @@ class GuiBoard extends JPanel implements ActionListener {
     private void setDefault() {
         try {
             saveState.setDefault(board);
+            def.updateIcon("default_sel.png");
         } catch (IOException e) {
             new CrashHandler(e);
         }

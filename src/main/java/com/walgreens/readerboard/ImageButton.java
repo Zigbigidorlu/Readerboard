@@ -23,17 +23,8 @@ class ImageButton extends JButton implements ChangeListener {
     private ImageButton(String text, String icon, boolean isHorizontal) {
         super((text != null) ? "<HTML><CENTER>" + text + "</CENTER></HTML>" : "");
 
-        try {
-            URL iconUrl = getClass().getClassLoader().getResource("icons/" + icon);
-            if (iconUrl != null) {
-                ImageIcon ico = new ImageIcon(ImageIO.read(iconUrl));
-                setIcon(ico);
-            } else {
-                Debug.log("Icon does not exist: " + icon);
-            }
-        } catch (IOException e) {
-            // Leave blank
-        }
+        // Set icon
+        updateIcon(icon);
 
         setVerticalTextPosition((isHorizontal) ? SwingConstants.CENTER : SwingConstants.BOTTOM);
         setHorizontalTextPosition((isHorizontal) ? SwingConstants.RIGHT : SwingConstants.CENTER);
@@ -72,6 +63,21 @@ class ImageButton extends JButton implements ChangeListener {
         this(null, foreground, icon, false);
         addActionListener(actionListener);
         setActionCommand(actionCommand);
+    }
+
+    void updateIcon(String icon) {
+        try {
+            URL iconUrl = getClass().getClassLoader().getResource("icons/" + icon);
+            if (iconUrl != null) {
+                ImageIcon ico = new ImageIcon(ImageIO.read(iconUrl));
+                setIcon(ico);
+                revalidate();
+            } else {
+                Debug.log("Icon does not exist: " + icon);
+            }
+        } catch (IOException e) {
+            // Leave blank
+        }
     }
 
     // TODO: Click color handling
