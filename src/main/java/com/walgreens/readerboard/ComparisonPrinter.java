@@ -62,17 +62,19 @@ class ComparisonPrinter extends JDialog implements ActionListener {
             // Build an HTML page for printing (using j2html)
             ContainerTag body = body();
             for (Board board : lastSaveState.boards) {
+                // Pre-formatted
+                ContainerTag pre = pre();
+
                 // Header
                 ContainerTag header = h2(board.name);
 
                 // Keep Label
-                ContainerTag pre = pre();
-                pre.with(label("Keep: " + board.keep), br());
+                pre.with(text("Keep: " + board.keep), br());
 
                 // Build new messages
                 for (char[] chars : board.messages) {
                     for (char aChar : chars) {
-                        pre.with(label(aChar + " "));
+                        pre.with(text(aChar + " "));
                     }
                     pre.with(br());
                 }
