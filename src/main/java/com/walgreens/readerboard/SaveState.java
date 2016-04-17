@@ -17,10 +17,10 @@ import java.util.List;
  */
 class SaveState implements Serializable {
     static final long serialVersionUID = 1000L;
-
-    private int week, year;
-    int default_board = 0;
     final List<Board> boards;
+    int default_board = 0;
+    private int week, year;
+
     SaveState() {
         boards = new ArrayList<>();
     }
@@ -30,7 +30,7 @@ class SaveState implements Serializable {
         File dir = new File("saves");
 
         // Make save directory if it doesn't exist
-        if(!dir.exists() && !dir.mkdirs()) {
+        if (!dir.exists() && !dir.mkdirs()) {
             throw new IOException("Unable to write save state directory");
         }
 
@@ -40,7 +40,7 @@ class SaveState implements Serializable {
         return load(file);
     }
 
-    File getRecent(File dir) {
+    private File getRecent(File dir) {
         return getRecent(dir, false);
     }
 
@@ -60,17 +60,16 @@ class SaveState implements Serializable {
             }
 
             // If files exist...
-            if(rbFiles.size() > 0) {
+            if (rbFiles.size() > 0) {
                 File[] fileList = rbFiles.toArray(new File[rbFiles.size()]);
 
                 // Sort files by last modified (most recent first)
                 Arrays.sort(fileList, (f1, f2) -> Long.valueOf(f2.lastModified()).compareTo(f1.lastModified()));
 
                 // Get file, last week if flagged.
-                if(fileList.length > 1) {
+                if (fileList.length > 1) {
                     file = fileList[lastWeek ? 1 : 0];
-                }
-                else {
+                } else {
                     file = fileList[0];
                 }
             }
@@ -80,16 +79,15 @@ class SaveState implements Serializable {
     }
 
     SaveState load(File file) throws IOException, ClassNotFoundException {
-        if(file != null && file.exists()) {
+        if (file != null && file.exists()) {
             FileInputStream in = new FileInputStream(file);
             ObjectInputStream oin = new ObjectInputStream(in);
             return (SaveState) oin.readObject();
-        }
-        else {
+        } else {
             // Build dummy boards
             for (int i = 0; i < Main.boardCount; i++) {
                 Board b = new Board("Untitled Board");
-                for(int j = 0; j < Main.lineCount; j++) {
+                for (int j = 0; j < Main.lineCount; j++) {
                     String message = "Default Message";
                     b.messages.add(message.toCharArray());
                 }
@@ -114,8 +112,7 @@ class SaveState implements Serializable {
             oos.writeObject(this);
 
             return this;
-        }
-        else {
+        } else {
             throw new IOException("Unable to write save state");
         }
     }
@@ -127,7 +124,7 @@ class SaveState implements Serializable {
 
     ArrayList<Character> getCharacters() {
         ArrayList<Character> characters = new ArrayList<>();
-        for(Board board : boards) {
+        for (Board board : boards) {
             characters.addAll(board.getCharacters());
         }
         return characters;

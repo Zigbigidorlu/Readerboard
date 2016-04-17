@@ -32,16 +32,15 @@ class JPanel extends javax.swing.JPanel {
 
         try {
             URL iconUrl = getClass().getClassLoader().getResource("icons/" + icon);
-            if(iconUrl != null) {
+            if (iconUrl != null) {
                 ImageIcon ico = new ImageIcon(ImageIO.read(iconUrl));
                 JLabel image = new JLabel(ico);
                 add(image);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // Leave blank
         }
         setAlignmentX(Component.CENTER_ALIGNMENT);
-        setBorder(new EmptyBorder(8,8,8,8));
+        setBorder(new EmptyBorder(8, 8, 8, 8));
     }
 }

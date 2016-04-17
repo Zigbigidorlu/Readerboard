@@ -27,14 +27,14 @@ class CrashHandler extends JDialog {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         // Build dimensions
-        Dimension dimension = new Dimension(500,250);
+        Dimension dimension = new Dimension(500, 250);
         setPreferredSize(dimension);
         setResizable(false);
         setModal(true);
 
         // Build the content panel
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new EmptyBorder(10,10,10,10));
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         add(panel);
 
         // North panel
@@ -71,25 +71,24 @@ class CrashHandler extends JDialog {
             // Add message
             SimpleAttributeSet bold = new SimpleAttributeSet();
             bold.addAttribute(StyleConstants.CharacterConstants.Bold, true);
-            StyleConstants.setFontSize(bold,14);
+            StyleConstants.setFontSize(bold, 14);
             document.insertString(0, e.getClass().getSimpleName() + ": " + e.getMessage() + "\n\n", bold);
 
             // Write stack trace
             SimpleAttributeSet italics = new SimpleAttributeSet();
-            bold.addAttribute(StyleConstants.CharacterConstants.Italic,true);
+            bold.addAttribute(StyleConstants.CharacterConstants.Italic, true);
             for (StackTraceElement element : e.getStackTrace()) {
-                document.insertString(document.getLength()," -> " +
+                document.insertString(document.getLength(), " -> " +
                         element.getFileName() +
                         ":" + element.getMethodName() +
                         ":" + element.getLineNumber() +
                         "\n", italics);
             }
 
-            if(Main.writeLog) {
+            if (Main.writeLog) {
                 e.printStackTrace();
             }
-        }
-        catch (BadLocationException ble) {
+        } catch (BadLocationException ble) {
             ble.printStackTrace();
         }
 
@@ -108,7 +107,7 @@ class CrashHandler extends JDialog {
         button.setText("Copy message to clipboard and close");
         button.addActionListener(e1 -> {
             StringSelection contents = new StringSelection(textArea.getText());
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents,null);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, null);
             dispose();
         });
         south.add(button);
@@ -123,7 +122,7 @@ class CrashHandler extends JDialog {
         getRootPane().setDefaultButton(close);
 
         // Add border for spacing
-        south.setBorder(new EmptyBorder(10,10,0,10));
+        south.setBorder(new EmptyBorder(10, 10, 0, 10));
 
         // Add south layout
         panel.add(south, BorderLayout.SOUTH);

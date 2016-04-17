@@ -26,12 +26,12 @@ import java.util.List;
  * @since 2/22/2016
  */
 class UserInterface extends JFrame implements ActionListener {
+    static final Color wagRed = new Color(229, 24, 55);
+    static final Color background = Color.WHITE;
+    static final List<Image> icons = new ArrayList<>();
     private JPanel contents;
     private GuiBoard guiBoard;
     private SaveState saveState;
-    static final Color wagRed = new Color(229,24,55);
-    static final Color background = Color.WHITE;
-    static final List<Image> icons = new ArrayList<>();
 
     UserInterface(SaveState saveState) {
         // Set SaveState
@@ -50,8 +50,7 @@ class UserInterface extends JFrame implements ActionListener {
             if (ico128 != null) icons.add(ImageIO.read(ico128));
 
             setIconImages(icons);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // Ignore, as it's not critical
             e.printStackTrace();
         }
@@ -80,7 +79,7 @@ class UserInterface extends JFrame implements ActionListener {
 
     private void buildInterface() {
         JPanel view = new JPanel(new BorderLayout());
-        view.setBorder(new EmptyBorder(10,10,10,10));
+        view.setBorder(new EmptyBorder(10, 10, 10, 10));
         view.setBackground(background);
         view.setOpaque(true);
 
@@ -90,8 +89,8 @@ class UserInterface extends JFrame implements ActionListener {
 
         // Build contents panel
         contents = new JPanel();
-        contents.setLayout(new BoxLayout(contents,BoxLayout.Y_AXIS));
-        MatteBorder border = new MatteBorder(1,0,0,0,wagRed);
+        contents.setLayout(new BoxLayout(contents, BoxLayout.Y_AXIS));
+        MatteBorder border = new MatteBorder(1, 0, 0, 0, wagRed);
         contents.setBorder(border);
         view.add(contents, BorderLayout.CENTER);
 
@@ -108,14 +107,14 @@ class UserInterface extends JFrame implements ActionListener {
         // Header image
         JPanel header = new JPanel(new BorderLayout());
         URL url = getClass().getClassLoader().getResource("images/header.png");
-        if(url != null) {
+        if (url != null) {
             JLabel image = new JLabel(new ImageIcon(url));
             header.add(image, BorderLayout.WEST);
         }
 
         JLabel version = new JLabel("Version " + Main.version);
-        version.setForeground(new Color(200,200,200));
-        version.setBorder(new EmptyBorder(0,0,10,20));
+        version.setForeground(new Color(200, 200, 200));
+        version.setBorder(new EmptyBorder(0, 0, 10, 20));
         version.setVerticalAlignment(JLabel.BOTTOM);
         header.add(version, BorderLayout.EAST);
 
@@ -193,7 +192,7 @@ class UserInterface extends JFrame implements ActionListener {
         int result = chooser.showOpenDialog(this);
 
         // Load readerboard file
-        if(result == JFileChooser.APPROVE_OPTION) {
+        if (result == JFileChooser.APPROVE_OPTION) {
             try {
                 File file = chooser.getSelectedFile();
                 saveState = saveState.load(file);
@@ -204,7 +203,7 @@ class UserInterface extends JFrame implements ActionListener {
             }
 
             // If the file isn't a valid save, or corrupted
-            catch (ClassNotFoundException|IOException e) {
+            catch (ClassNotFoundException | IOException e) {
                 // Little alert sound
                 Toolkit.getDefaultToolkit().beep();
 
@@ -226,23 +225,21 @@ class UserInterface extends JFrame implements ActionListener {
 
     private void selectBoard(MouseEvent e) {
         JPopupMenu menu = new JPopupMenu();
-        for(int i = 0; i < saveState.boards.size(); i++) {
+        for (int i = 0; i < saveState.boards.size(); i++) {
             int index = i;
             String name = saveState.boards.get(i).name;
             JMenuItem item = new JMenuItem(new AbstractAction(name) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if(guiBoard.isSaved()) {
+                    if (guiBoard.isSaved()) {
                         showBoard(index);
-                    }
-                    else {
+                    } else {
                         int doSave = JOptionPane.showConfirmDialog(UserInterface.this,
                                 "Board is not saved. Would you like to save it now?");
-                        if(doSave == 0) {
+                        if (doSave == 0) {
                             guiBoard.save();
                             showBoard(index);
-                        }
-                        else if(doSave == 1) {
+                        } else if (doSave == 1) {
                             showBoard(index);
                         }
                     }
@@ -266,7 +263,7 @@ class UserInterface extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch(e.getActionCommand()) {
+        switch (e.getActionCommand()) {
             case "import":
                 importBoard();
                 break;

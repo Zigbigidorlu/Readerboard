@@ -30,7 +30,7 @@ class QRBlockDialog extends JDialog {
         setModal(true);
         setBackground(Color.WHITE);
         setIconImages(UserInterface.icons);
-        Dimension dimension = new Dimension(350,350);
+        Dimension dimension = new Dimension(350, 350);
         setPreferredSize(dimension);
 
         JPanel content = new JPanel(new BorderLayout());
@@ -45,12 +45,12 @@ class QRBlockDialog extends JDialog {
             BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 350, 350, hintMap);
 
             // Build image
-            BufferedImage image = new BufferedImage(350,350,BufferedImage.TYPE_INT_RGB);
+            BufferedImage image = new BufferedImage(350, 350, BufferedImage.TYPE_INT_RGB);
             image.createGraphics();
 
             Graphics2D graphics = (Graphics2D) image.getGraphics();
             graphics.setColor(Color.WHITE);
-            graphics.fillRect(0,0,350,350);
+            graphics.fillRect(0, 0, 350, 350);
             graphics.setColor(Color.BLACK);
 
             for (int i = 0; i < 350; i++) {
@@ -64,8 +64,7 @@ class QRBlockDialog extends JDialog {
             ImageIcon imageIcon = new ImageIcon(image);
             JLabel imgLabel = new JLabel(imageIcon);
             add(imgLabel);
-        }
-        catch (WriterException e) {
+        } catch (WriterException e) {
             new CrashHandler(e);
         }
 

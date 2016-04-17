@@ -26,24 +26,24 @@ import java.util.List;
  * @since 3/5/2016
  */
 class GuiBoardLine extends JPanel {
-    private Font font;
     private final List<Character> message;
+    private Font font;
 
     GuiBoardLine(String contents) {
         super();
-        setBackground(new Color(215,225,225));
+        setBackground(new Color(215, 225, 225));
         setOpaque(true);
         setFocusable(true);
 
         // Set width
         int width = 30 * Main.maxLength;
-        setPreferredSize(new Dimension(width,50));
+        setPreferredSize(new Dimension(width, 50));
 
         // Set layout
         setLayout(new GridBagLayout());
 
         // Set border
-        setBorder(BorderFactory.createLineBorder(new Color(176,186,187),2));
+        setBorder(BorderFactory.createLineBorder(new Color(176, 186, 187), 2));
 
         // Load font
         try {
@@ -52,8 +52,7 @@ class GuiBoardLine extends JPanel {
                 Font coreFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
                 font = coreFont.deriveFont(26f);
             }
-        }
-        catch(FontFormatException | IOException e) {
+        } catch (FontFormatException | IOException e) {
             new CrashHandler(e);
         }
 
@@ -62,18 +61,17 @@ class GuiBoardLine extends JPanel {
 
         // Load characters onto board
         char[] letters = contents.toCharArray();
-        for(char letter : letters) {
+        for (char letter : letters) {
             addChar(letter);
         }
     }
 
     private double messageSize() {
         double count = 0.0;
-        for(char character : message) {
-            if(character == ' ') {
+        for (char character : message) {
+            if (character == ' ') {
                 count = count + 0.3;
-            }
-            else {
+            } else {
                 count++;
             }
         }
@@ -81,7 +79,7 @@ class GuiBoardLine extends JPanel {
     }
 
     boolean addChar(char character) {
-        if(messageSize() + 1 < Main.maxLength) {
+        if (messageSize() + 1 < Main.maxLength) {
             message.add(character);
             CharBlock block = new CharBlock(character);
             add(block);
@@ -93,7 +91,7 @@ class GuiBoardLine extends JPanel {
     }
 
     boolean delChar() {
-        if(message.size() > 0) {
+        if (message.size() > 0) {
             message.remove(message.size() - 1);
             remove(getComponentCount() - 1);
             revalidate();
@@ -117,6 +115,7 @@ class GuiBoardLine extends JPanel {
 
     private class CharBlock extends JPanel implements MouseListener, KeyListener {
         Color color;
+
         CharBlock(Character character) {
             put(character);
         }
@@ -129,21 +128,21 @@ class GuiBoardLine extends JPanel {
         void put(String c) {
             boolean isSpace = c.equals(" ");
             color = (StringUtils.isNumeric(c)) ? Color.RED : Color.BLACK;
-            Dimension size = new Dimension((isSpace) ? 10 : 30,40);
+            Dimension size = new Dimension((isSpace) ? 10 : 30, 40);
             setPreferredSize(size);
             setMinimumSize(size);
             setMaximumSize(size);
             setOpaque(!isSpace);
-            setBackground(new Color(255,255,255,85));
+            setBackground(new Color(255, 255, 255, 85));
 
-            Color highlight = new Color(196,206,207);
-            Color shadow = new Color(176,186,187);
-            setBorder(isSpace ? new EmptyBorder(0,0,0,0) : new CompoundBorder(
-                    BorderFactory.createMatteBorder(1,1,0,0,highlight),
-                    BorderFactory.createMatteBorder(0,0,1,1,shadow)
+            Color highlight = new Color(196, 206, 207);
+            Color shadow = new Color(176, 186, 187);
+            setBorder(isSpace ? new EmptyBorder(0, 0, 0, 0) : new CompoundBorder(
+                    BorderFactory.createMatteBorder(1, 1, 0, 0, highlight),
+                    BorderFactory.createMatteBorder(0, 0, 1, 1, shadow)
             ));
 
-            JLabel label = new JLabel(c,SwingConstants.CENTER);
+            JLabel label = new JLabel(c, SwingConstants.CENTER);
             label.setVerticalAlignment(JLabel.CENTER);
             label.setForeground(color);
             label.setFont(font);
@@ -154,9 +153,9 @@ class GuiBoardLine extends JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(e.getClickCount() == 2) {
+            if (e.getClickCount() == 2) {
                 Color focus = new Color((GuiBoard.board_default.getRed() + 20),
-                        (GuiBoard.board_default.getGreen() -15),
+                        (GuiBoard.board_default.getGreen() - 15),
                         (GuiBoard.board_default.getBlue() + 15)
                 );
                 setBackground(focus);
@@ -164,18 +163,29 @@ class GuiBoardLine extends JPanel {
             }
         }
 
-        @Override public void mousePressed(MouseEvent e) {}
-        @Override public void mouseReleased(MouseEvent e) {}
-        @Override public void mouseEntered(MouseEvent e) {}
-        @Override public void mouseExited(MouseEvent e) {}
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
 
         @Override
         public void keyTyped(KeyEvent e) {
-            if(hasFocus()) {
+            if (hasFocus()) {
                 char character = Character.toLowerCase(e.getKeyChar());
                 if (GuiBoard.filterList.contains(character)) {
                     put(character);
-                    setBackground(new Color(255,255,255,85));
+                    setBackground(new Color(255, 255, 255, 85));
                     revalidate();
                     repaint();
                 }

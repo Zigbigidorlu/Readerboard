@@ -14,9 +14,9 @@ import java.util.ArrayList;
  * @since 3/15/2016
  */
 class Debug {
-    private static JTextArea contents;
     private static final ArrayList<StackTraceElement[]> traceElements;
     private static final ArrayList<String> log;
+    private static JTextArea contents;
 
     static {
         traceElements = new ArrayList<>();
@@ -28,15 +28,15 @@ class Debug {
         traceElements.add(stack);
         log.add(message);
 
-        if(contents != null) {
-            addLogElement(message,stack);
+        if (contents != null) {
+            addLogElement(message, stack);
         }
     }
 
     static void console() {
         JDialog debugConsole = new JDialog();
         debugConsole.setTitle("Debug Console");
-        debugConsole.setPreferredSize(new Dimension(500,650));
+        debugConsole.setPreferredSize(new Dimension(500, 650));
         debugConsole.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
         contents = new JTextArea();
@@ -45,7 +45,7 @@ class Debug {
         scrollPane.setAutoscrolls(true);
         debugConsole.add(scrollPane);
 
-        for(int i = 0; i < log.size(); i++) {
+        for (int i = 0; i < log.size(); i++) {
             addLogElement(log.get(i), traceElements.get(i));
         }
 

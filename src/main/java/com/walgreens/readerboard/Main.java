@@ -19,17 +19,12 @@ import java.util.Properties;
  * @since 2/22/2016
  */
 public class Main {
-    private Ini ini;
-    private SaveState saveState;
-    private ServerSocket lock;
-
+    private static final int default_boardCount, default_lineCount, default_maxLength,
+            default_windowWidth, default_windowHeight;
     // Global variables
     static int boardCount, lineCount, maxLength, windowWidth, windowHeight;
     static String name, version;
     static boolean writeLog;
-
-    private static final int    default_boardCount, default_lineCount, default_maxLength,
-                                default_windowWidth, default_windowHeight;
 
     static {
         default_boardCount = 4;
@@ -39,11 +34,9 @@ public class Main {
         default_windowHeight = 375;
     }
 
-    // Initialize class
-    public static void main(String[] args) {
-        writeLog = Arrays.asList(args).contains("-log");
-        new Main();
-    }
+    private Ini ini;
+    private SaveState saveState;
+    private ServerSocket lock;
 
     private Main() {
         // Set look and feel of swing windows
@@ -74,9 +67,15 @@ public class Main {
 
         // Application already open
         catch (IOException e) {
-            JOptionPane.showMessageDialog(  null,"An instance of this application is already open.",
-                                            "Oops!", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "An instance of this application is already open.",
+                    "Oops!", JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    // Initialize class
+    public static void main(String[] args) {
+        writeLog = Arrays.asList(args).contains("-log");
+        new Main();
     }
 
     private void getProperties() throws IOException {
@@ -92,26 +91,26 @@ public class Main {
         File iniFile = new File("config.ini");
 
         // Check if file exists
-        if(iniFile.exists()) {
+        if (iniFile.exists()) {
             // Set ini global
             ini = new Ini(iniFile);
 
             // Load variables into memory
             Ini.Section section = ini.get("Config");
             windowWidth = Integer.parseInt(
-                    section.getOrDefault("gui.window_width",String.valueOf(default_windowWidth))
+                    section.getOrDefault("gui.window_width", String.valueOf(default_windowWidth))
             );
             windowHeight = Integer.parseInt(
-                    section.getOrDefault("gui.window_height",String.valueOf(default_windowHeight))
+                    section.getOrDefault("gui.window_height", String.valueOf(default_windowHeight))
             );
             boardCount = Integer.parseInt(
-                    section.getOrDefault("rb.boards_count",String.valueOf(default_boardCount))
+                    section.getOrDefault("rb.boards_count", String.valueOf(default_boardCount))
             );
             lineCount = Integer.parseInt(
-                    section.getOrDefault("rb.lines_per_board",String.valueOf(default_lineCount))
+                    section.getOrDefault("rb.lines_per_board", String.valueOf(default_lineCount))
             );
             maxLength = Integer.parseInt(
-                    section.getOrDefault("rb.max_length",String.valueOf(default_maxLength))
+                    section.getOrDefault("rb.max_length", String.valueOf(default_maxLength))
             );
         }
 
@@ -123,7 +122,7 @@ public class Main {
 
     // Build initial INI file
     private void buildINI(File file) throws IOException {
-        if(file.createNewFile()) {
+        if (file.createNewFile()) {
             // Set default values
             boardCount = default_boardCount;
             lineCount = default_lineCount;
@@ -131,14 +130,13 @@ public class Main {
 
             // Write ini file contents
             ini = new Ini(file);
-            ini.put("Config","gui.window_width",default_windowWidth);
-            ini.put("Config","gui.window_height",default_windowHeight);
-            ini.put("Config","rb.boards_count",default_boardCount);
-            ini.put("Config","rb.lines_per_board",default_lineCount);
-            ini.put("Config","rb.max_length",default_maxLength);
+            ini.put("Config", "gui.window_width", default_windowWidth);
+            ini.put("Config", "gui.window_height", default_windowHeight);
+            ini.put("Config", "rb.boards_count", default_boardCount);
+            ini.put("Config", "rb.lines_per_board", default_lineCount);
+            ini.put("Config", "rb.max_length", default_maxLength);
             ini.store();
-        }
-        else {
+        } else {
             throw new IOException("Unable to write config file");
         }
     }

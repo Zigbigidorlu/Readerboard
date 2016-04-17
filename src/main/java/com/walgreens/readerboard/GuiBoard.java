@@ -20,11 +20,11 @@ import java.util.List;
  * @since 3/1/2016
  */
 class GuiBoard extends JPanel implements ActionListener {
+    final static List<Character> filterList = new ArrayList<>();
+    static final Color board_default = new Color(225, 235, 235);
+    private final List<GuiBoardLine> lines = new ArrayList<>();
     private Board board;
     private SaveState saveState;
-    private final List<GuiBoardLine> lines = new ArrayList<>();
-    final static List<Character> filterList = new ArrayList<>();
-    static final Color board_default = new Color(225,235,235);
     private JLabel name;
 
     GuiBoard(Board board, SaveState saveState) {
@@ -47,10 +47,21 @@ class GuiBoard extends JPanel implements ActionListener {
                 grabFocus();
             }
 
-            @Override public void mousePressed(MouseEvent e) {}
-            @Override public void mouseReleased(MouseEvent e) {}
-            @Override public void mouseEntered(MouseEvent e) {}
-            @Override public void mouseExited(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
         });
 
         // Build filter list
@@ -58,7 +69,7 @@ class GuiBoard extends JPanel implements ActionListener {
                 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
                 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4',
                 '5', '6', '7', '8', '9', '0', '$', '.', ',', '\'',
-                ':', '!', '/', '?', '&', '%','-',' '};
+                ':', '!', '/', '?', '&', '%', '-', ' '};
         for (char aFilter : filter) {
             filterList.add(aFilter);
         }
@@ -78,7 +89,7 @@ class GuiBoard extends JPanel implements ActionListener {
         Dimension dimension = new Dimension();
         dimension.height = 52;
         toolbar.setPreferredSize(dimension);
-        toolbar.setBorder(new EmptyBorder(3,5,3,5));
+        toolbar.setBorder(new EmptyBorder(3, 5, 3, 5));
 
         JPanel contents = new JPanel();
         contents.setLayout(new BorderLayout());
@@ -92,25 +103,25 @@ class GuiBoard extends JPanel implements ActionListener {
         Font font = name.getFont();
         Font newFont = font.deriveFont(Font.BOLD, 18);
         name.setFont(newFont);
-        name.setBorder(new EmptyBorder(0,0,0,6));
+        name.setBorder(new EmptyBorder(0, 0, 0, 6));
         nameMenu.add(name);
 
-        ImageButton rename = new ImageButton(Color.BLACK,"rename.png",this,"rename");
+        ImageButton rename = new ImageButton(Color.BLACK, "rename.png", this, "rename");
         rename.setToolTipText("Rename Board");
         nameMenu.add(rename);
 
-        ImageButton def = new ImageButton(Color.BLACK,"default.png",this,"default");
+        ImageButton def = new ImageButton(Color.BLACK, "default.png", this, "default");
         def.setToolTipText("Set as default board");
         nameMenu.add(def);
 
         JPanel actions = new JPanel();
-        contents.add(actions,BorderLayout.EAST);
+        contents.add(actions, BorderLayout.EAST);
 
-        ImageButton save = new ImageButton(Color.BLACK,"save.png",this,"save");
+        ImageButton save = new ImageButton(Color.BLACK, "save.png", this, "save");
         save.setToolTipText("Save messages");
         actions.add(save);
 
-        ImageButton clear = new ImageButton(Color.BLACK,"clear.png",this,"clear");
+        ImageButton clear = new ImageButton(Color.BLACK, "clear.png", this, "clear");
         clear.setToolTipText("Clear board");
         actions.add(clear);
 
@@ -124,20 +135,20 @@ class GuiBoard extends JPanel implements ActionListener {
         decor.setLayout(new BoxLayout(decor, BoxLayout.Y_AXIS));
         decor.setBackground(board_default);
         decor.setOpaque(true);
-        Color highlight = new Color(196,206,207);
-        Color shadow = new Color(176,186,187);
+        Color highlight = new Color(196, 206, 207);
+        Color shadow = new Color(176, 186, 187);
         decor.setBorder(
                 new CompoundBorder(
-                    new CompoundBorder(
-                        BorderFactory.createMatteBorder(1,1,0,0,highlight),
-                        BorderFactory.createMatteBorder(0,0,2,2,shadow)
-                    ), new EmptyBorder(10,10,10,10)
+                        new CompoundBorder(
+                                BorderFactory.createMatteBorder(1, 1, 0, 0, highlight),
+                                BorderFactory.createMatteBorder(0, 0, 2, 2, shadow)
+                        ), new EmptyBorder(10, 10, 10, 10)
                 )
         );
 
         // If messages is null, build some default
-        if(board.messages.size() == 0) {
-            for(int i = 0; i < Main.lineCount; i++) {
+        if (board.messages.size() == 0) {
+            for (int i = 0; i < Main.lineCount; i++) {
                 String message = "Default Message";
                 board.messages.add(message.toCharArray());
             }
@@ -165,8 +176,7 @@ class GuiBoard extends JPanel implements ActionListener {
                 messages.add(characters);
             }
             saveState.save();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             new CrashHandler(e);
         }
     }
@@ -178,8 +188,7 @@ class GuiBoard extends JPanel implements ActionListener {
     private void setDefault() {
         try {
             saveState.setDefault(board);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             new CrashHandler(e);
         }
     }
@@ -187,14 +196,13 @@ class GuiBoard extends JPanel implements ActionListener {
     private void rename() {
         try {
             String newName = JOptionPane.showInputDialog(this, "Input a new name for this board:");
-            if(newName != null && newName.trim().length() > 0) {
+            if (newName != null && newName.trim().length() > 0) {
                 board.name = newName;
                 name.setText(board.name);
                 name.revalidate();
                 saveState.save();
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             new CrashHandler(e);
         }
     }
@@ -204,7 +212,7 @@ class GuiBoard extends JPanel implements ActionListener {
         ArrayList<char[]> messages = board.messages;
         for (int i = 0; i < messages.size(); i++) {
             char[] characters = lines.get(i).get();
-            if(!Arrays.equals(characters,messages.get(i))) {
+            if (!Arrays.equals(characters, messages.get(i))) {
                 isSaved = false;
             }
         }
@@ -213,7 +221,7 @@ class GuiBoard extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch(e.getActionCommand()) {
+        switch (e.getActionCommand()) {
             case "save":
                 save();
                 break;
@@ -231,6 +239,7 @@ class GuiBoard extends JPanel implements ActionListener {
 
     private class KeyEventListener implements KeyListener {
         final GuiBoardLine panel;
+
         KeyEventListener(GuiBoardLine panel) {
             this.panel = panel;
         }
@@ -239,14 +248,14 @@ class GuiBoard extends JPanel implements ActionListener {
         public void keyReleased(KeyEvent e) {
             char character = Character.toLowerCase(e.getKeyChar());
             if (filterList.contains(character)) {
-                if(!panel.addChar(character)) {
+                if (!panel.addChar(character)) {
                     Debug.log("Character not added, limit exceeded");
                 }
             }
 
             // Backspace key
             else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                if(!panel.delChar()) {
+                if (!panel.delChar()) {
                     Debug.log("Character deletion error");
                 }
             }
@@ -259,19 +268,23 @@ class GuiBoard extends JPanel implements ActionListener {
             // Enter key
             else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 panel.transferFocus();
-            }
-
-            else {
+            } else {
                 Debug.log("Invalid character: " + e.getKeyChar());
             }
         }
 
-        @Override public void keyTyped(KeyEvent e) {}
-        @Override public void keyPressed(KeyEvent e) {}
+        @Override
+        public void keyTyped(KeyEvent e) {
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+        }
     }
 
     private class MouseEventListener implements MouseListener {
         final JPanel panel;
+
         MouseEventListener(JPanel panel) {
             this.panel = panel;
         }
@@ -281,8 +294,9 @@ class GuiBoard extends JPanel implements ActionListener {
             panel.grabFocus();
         }
 
-        @Override public void mouseEntered(MouseEvent e) {
-            if(!panel.hasFocus()) {
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            if (!panel.hasFocus()) {
                 Color focus = new Color((board_default.getRed() + 20),
                         (board_default.getGreen() + 20),
                         (board_default.getBlue() + 20)
@@ -290,18 +304,26 @@ class GuiBoard extends JPanel implements ActionListener {
                 panel.setBackground(focus);
             }
         }
-        @Override public void mouseExited(MouseEvent e) {
-            if(!panel.hasFocus()) {
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            if (!panel.hasFocus()) {
                 panel.setBackground(board_default);
             }
         }
 
-        @Override public void mousePressed(MouseEvent e) {}
-        @Override public void mouseReleased(MouseEvent e) {}
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
     }
 
     private class FocusEventListener implements FocusListener {
         final JPanel panel;
+
         FocusEventListener(JPanel panel) {
             this.panel = panel;
         }
@@ -311,7 +333,8 @@ class GuiBoard extends JPanel implements ActionListener {
             panel.setBackground(board_default);
         }
 
-        @Override public void focusGained(FocusEvent e) {
+        @Override
+        public void focusGained(FocusEvent e) {
             Color focus = new Color((board_default.getRed() + 20),
                     (board_default.getGreen() + 20),
                     (board_default.getBlue() + 10)

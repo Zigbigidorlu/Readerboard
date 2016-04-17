@@ -16,14 +16,15 @@ class Board implements Serializable {
     String name;
     ArrayList<char[]> messages = new ArrayList<>();
     ArrayList<Character> keep = new ArrayList<>();
+
     Board(String name) {
         this.name = name;
     }
 
     ArrayList<Character> getCharacters() {
         ArrayList<Character> characters = new ArrayList<>();
-        for(char[] chars : messages) {
-            for(char character : chars) {
+        for (char[] chars : messages) {
+            for (char character : chars) {
                 characters.add(character);
             }
         }

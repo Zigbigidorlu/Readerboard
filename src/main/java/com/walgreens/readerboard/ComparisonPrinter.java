@@ -1,13 +1,22 @@
 package com.walgreens.readerboard;
 
+import j2html.tags.ContainerTag;
+import org.apache.commons.io.FileUtils;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.walgreens.readerboard.UserInterface.wagRed;
+import static j2html.TagCreator.*;
 
 /**
  * Readerboard
@@ -18,25 +27,13 @@ import java.util.ArrayList;
  * @author Adam Treadway
  * @since 4/10/2016
  */
-public class ComparisonPrinter implements Printable {
+class ComparisonPrinter extends JDialog implements ActionListener {
     private SaveState saveState;
+    private JEditorPane previewArea;
+
     ComparisonPrinter(SaveState saveState) {
         this.saveState = saveState;
-
-        PrinterJob job = PrinterJob.getPrinterJob();
-        PageFormat format = new PageFormat();
-        format.setOrientation(PageFormat.PORTRAIT);
-        job.setPrintable(this, format);
-        try {
-            if (job.printDialog()) {
-                //job.print();
-                buildComparison();
-            }
-        }
-        //catch (PrinterException e) {
-        catch(Exception e) {
-            new CrashHandler(e);
-        }
+        buildComparison();
     }
 
     private void buildComparison() {
@@ -49,11 +46,11 @@ public class ComparisonPrinter implements Printable {
             ArrayList<Character> characters = saveState.getCharacters();
 
             // Build letters to keep
-            for(Board board : lastSaveState.boards) {
-                for(Character c : board.getCharacters()) {
-                    for(int i = 0; i < characters.size(); i++) {
+            for (Board board : lastSaveState.boards) {
+                for (Character c : board.getCharacters()) {
+                    for (int i = 0; i < characters.size(); i++) {
                         Character ch = characters.get(i);
-                        if(c == ch && c != ' ') {
+                        if (c == ch && c != ' ') {
                             board.keep.add(c);
                             characters.remove(i);
                             break;
@@ -62,16 +59,43 @@ public class ComparisonPrinter implements Printable {
                 }
             }
 
-            // TODO: Build printable document
+            // Build an HTML page for printing (using j2html)
+            ContainerTag body = body();
+            for (Board board : lastSaveState.boards) {
+                // Header
+                ContainerTag header = h2(board.name);
 
-            for(Board board : lastSaveState.boards) {
-                System.out.println(board.name + ": " + board.keep);
+                // Keep Label
+                ContainerTag pre = pre();
+                pre.with(label("Keep: " + board.keep), br());
+
+                // Build new messages
+                for (char[] chars : board.messages) {
+                    for (char aChar : chars) {
+                        pre.with(label(aChar + " "));
+                    }
+                    pre.with(br());
+                }
+
+                // Paragraph
+                ContainerTag paragraph = p();
+                paragraph.with(header, pre);
+
+                // Add to body
+                body.with(paragraph);
             }
 
-            printPreview(new File("test.html"));
+            // HTML container
+            ContainerTag html = html().with(body);
 
-        }
-        catch (IOException | ClassNotFoundException e) {
+            //File with contents
+            File temp = File.createTempFile("readerboard", ".rbml");
+            FileUtils.writeStringToFile(temp, html.toString());
+            System.out.println(temp.getCanonicalPath());
+
+            // Display print preview
+            printPreview(temp);
+        } catch (IOException | ClassNotFoundException e) {
             new CrashHandler(e);
         }
     }
@@ -80,8 +104,7 @@ public class ComparisonPrinter implements Printable {
         String contents;
 
         // Read temp file to string
-        BufferedReader br = new BufferedReader(new FileReader(tempFile));
-        try {
+        try (BufferedReader br = new BufferedReader(new FileReader(tempFile))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
@@ -92,17 +115,20 @@ public class ComparisonPrinter implements Printable {
             }
             contents = sb.toString();
 
-        } finally {
-            br.close();
         }
 
         // Create dialog
-        JDialog jd = new JDialog();
-        jd.setModal(true);
-        jd.setPreferredSize(new Dimension(650,475));
+        setModal(true);
+        setPreferredSize(new Dimension(650, 475));
+        setIconImages(UserInterface.icons);
+        setTitle("Print Preview");
+
+        // Build base pane
+        JPanel panel = new JPanel(new BorderLayout());
+        add(panel);
 
         // Build preview pane
-        JEditorPane previewArea = new JEditorPane();
+        previewArea = new JEditorPane();
         previewArea.setEditable(false);
         previewArea.setBackground(Color.WHITE);
 
@@ -112,14 +138,51 @@ public class ComparisonPrinter implements Printable {
 
         // Create a scroll pane, add preview to it
         JScrollPane scrollPane = new JScrollPane(previewArea);
-        jd.add(scrollPane);
+        add(scrollPane, BorderLayout.CENTER);
 
-        jd.pack();
-        jd.setVisible(true);
+        // Build a simple toolbar
+        add(buildToolbar(), BorderLayout.NORTH);
+
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    private JToolBar buildToolbar() {
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        toolBar.setLayout(new BorderLayout());
+
+        // Set dimensions
+        Dimension dimension = new Dimension();
+        dimension.height = 45;
+        toolBar.setPreferredSize(dimension);
+        toolBar.setBackground(wagRed);
+
+        // Add print button
+        ImageButton print = new ImageButton("Print", Color.WHITE, "print_sm.png", this, "print", true);
+        toolBar.add(print, BorderLayout.WEST);
+
+        return toolBar;
+    }
+
+    private void doPrint() {
+        PrinterJob pj = PrinterJob.getPrinterJob();
+        if (pj.printDialog()) {
+            try {
+                previewArea.print();
+            } catch (PrinterException e) {
+                new CrashHandler(e);
+            }
+        }
     }
 
     @Override
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        return 0;
+    public void actionPerformed(ActionEvent e) {
+        switch (e.getActionCommand()) {
+            case "print":
+                doPrint();
+                break;
+        }
     }
 }

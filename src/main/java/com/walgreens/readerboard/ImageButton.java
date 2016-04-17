@@ -20,46 +20,56 @@ import java.net.URL;
  * @since 2/23/2016
  */
 class ImageButton extends JButton implements ChangeListener {
-    private ImageButton(String text, String icon) {
+    private ImageButton(String text, String icon, boolean isHorizontal) {
         super((text != null) ? "<HTML><CENTER>" + text + "</CENTER></HTML>" : "");
 
         try {
             URL iconUrl = getClass().getClassLoader().getResource("icons/" + icon);
-            if(iconUrl != null) {
+            if (iconUrl != null) {
                 ImageIcon ico = new ImageIcon(ImageIO.read(iconUrl));
                 setIcon(ico);
-            }
-            else {
+            } else {
                 Debug.log("Icon does not exist: " + icon);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // Leave blank
         }
 
-        setVerticalTextPosition(SwingConstants.BOTTOM);
-        setHorizontalTextPosition(SwingConstants.CENTER);
+        setVerticalTextPosition((isHorizontal) ? SwingConstants.CENTER : SwingConstants.BOTTOM);
+        setHorizontalTextPosition((isHorizontal) ? SwingConstants.RIGHT : SwingConstants.CENTER);
+        setAlignmentX(Component.CENTER_ALIGNMENT);
+
         setContentAreaFilled(false);
         setFocusPainted(false);
-        setAlignmentX(Component.CENTER_ALIGNMENT);
-        setBorder(new EmptyBorder(8,8,8,8));
+        setBorder(new EmptyBorder(8, 8, 8, 8));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         addChangeListener(this);
     }
 
-    private ImageButton(String text, Color foreground, String icon) {
-        this(text, icon);
+    private ImageButton(String text, String icon) {
+        this(text, icon, false);
+    }
+
+    private ImageButton(String text, Color foreground, String icon, boolean isHorizontal) {
+        this(text, icon, isHorizontal);
         setForeground(foreground);
     }
 
     ImageButton(String text, Color foreground, String icon, ActionListener actionListener, String actionCommand) {
-        this(text, foreground, icon);
+        this(text, foreground, icon, false);
+        addActionListener(actionListener);
+        setActionCommand(actionCommand);
+    }
+
+    ImageButton(String text, Color foreground, String icon, ActionListener actionListener,
+                String actionCommand, boolean isHorizontal) {
+        this(text, foreground, icon, isHorizontal);
         addActionListener(actionListener);
         setActionCommand(actionCommand);
     }
 
     ImageButton(Color foreground, String icon, ActionListener actionListener, String actionCommand) {
-        this(null, foreground, icon);
+        this(null, foreground, icon, false);
         addActionListener(actionListener);
         setActionCommand(actionCommand);
     }
@@ -67,7 +77,7 @@ class ImageButton extends JButton implements ChangeListener {
     // TODO: Click color handling
     @Override
     public void stateChanged(ChangeEvent e) {
-        if (getModel().isPressed()) {
-        }
+        /*if (getModel().isPressed()) {
+        }*/
     }
 }
