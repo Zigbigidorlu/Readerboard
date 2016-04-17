@@ -5,6 +5,7 @@ import org.ini4j.Ini;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -20,6 +21,7 @@ import java.util.Properties;
 public class Main {
     private Ini ini;
     private SaveState saveState;
+    private ServerSocket lock;
 
     // Global variables
     static int boardCount, lineCount, maxLength, windowWidth, windowHeight;
@@ -49,22 +51,31 @@ public class Main {
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName()
             );
-        }
-        catch ( ClassNotFoundException |
+        } catch (ClassNotFoundException |
                 InstantiationException |
                 IllegalAccessException |
                 UnsupportedLookAndFeelException f) {
             // Ignore
         }
 
-        // Load data and start GUI
+        // Check against application lock
         try {
-            getProperties();
-            loadINI();
-            startGUI();
+            lock = new ServerSocket(51603);
+
+            // Load data and start GUI
+            try {
+                getProperties();
+                loadINI();
+                startGUI();
+            } catch (IOException | ClassNotFoundException e) {
+                new CrashHandler(e);
+            }
         }
-        catch (IOException|ClassNotFoundException e) {
-            new CrashHandler(e);
+
+        // Application already open
+        catch (IOException e) {
+            JOptionPane.showMessageDialog(  null,"An instance of this application is already open.",
+                                            "Oops!", JOptionPane.WARNING_MESSAGE);
         }
     }
 

@@ -1,12 +1,12 @@
 package com.walgreens.readerboard;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -63,14 +63,59 @@ public class ComparisonPrinter implements Printable {
             }
 
             // TODO: Build printable document
+
             for(Board board : lastSaveState.boards) {
                 System.out.println(board.name + ": " + board.keep);
             }
+
+            printPreview(new File("test.html"));
 
         }
         catch (IOException | ClassNotFoundException e) {
             new CrashHandler(e);
         }
+    }
+
+    private void printPreview(File tempFile) throws IOException {
+        String contents;
+
+        // Read temp file to string
+        BufferedReader br = new BufferedReader(new FileReader(tempFile));
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            contents = sb.toString();
+
+        } finally {
+            br.close();
+        }
+
+        // Create dialog
+        JDialog jd = new JDialog();
+        jd.setModal(true);
+        jd.setPreferredSize(new Dimension(650,475));
+
+        // Build preview pane
+        JEditorPane previewArea = new JEditorPane();
+        previewArea.setEditable(false);
+        previewArea.setBackground(Color.WHITE);
+
+        // Assign text to pane
+        previewArea.setContentType("text/html");
+        previewArea.setText(contents);
+
+        // Create a scroll pane, add preview to it
+        JScrollPane scrollPane = new JScrollPane(previewArea);
+        jd.add(scrollPane);
+
+        jd.pack();
+        jd.setVisible(true);
     }
 
     @Override
