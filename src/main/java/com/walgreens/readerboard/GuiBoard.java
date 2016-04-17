@@ -58,7 +58,7 @@ class GuiBoard extends JPanel implements ActionListener {
                 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
                 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4',
                 '5', '6', '7', '8', '9', '0', '$', '.', ',', '\'',
-                ':', '!', '/', '?', '&', '%', ' '};
+                ':', '!', '/', '?', '&', '%','-',' '};
         for (char aFilter : filter) {
             filterList.add(aFilter);
         }
@@ -171,7 +171,7 @@ class GuiBoard extends JPanel implements ActionListener {
         }
     }
 
-    void clear() {
+    private void clear() {
         lines.forEach(GuiBoardLine::clear);
     }
 

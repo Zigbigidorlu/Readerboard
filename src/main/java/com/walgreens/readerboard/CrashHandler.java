@@ -84,6 +84,10 @@ class CrashHandler extends JDialog {
                         ":" + element.getLineNumber() +
                         "\n", italics);
             }
+
+            if(Main.writeLog) {
+                e.printStackTrace();
+            }
         }
         catch (BadLocationException ble) {
             ble.printStackTrace();

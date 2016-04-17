@@ -29,10 +29,12 @@ public class ComparisonPrinter implements Printable {
         job.setPrintable(this, format);
         try {
             if (job.printDialog()) {
-                job.print();
+                //job.print();
+                buildComparison();
             }
         }
-        catch (PrinterException e) {
+        //catch (PrinterException e) {
+        catch(Exception e) {
             new CrashHandler(e);
         }
     }
@@ -49,9 +51,11 @@ public class ComparisonPrinter implements Printable {
             // Build letters to keep
             for(Board board : lastSaveState.boards) {
                 for(Character c : board.getCharacters()) {
-                    for(Character ch : characters) {
-                        if(c == ch) {
+                    for(int i = 0; i < characters.size(); i++) {
+                        Character ch = characters.get(i);
+                        if(c == ch && c != ' ') {
                             board.keep.add(c);
+                            characters.remove(i);
                             break;
                         }
                     }
@@ -59,6 +63,9 @@ public class ComparisonPrinter implements Printable {
             }
 
             // TODO: Build printable document
+            for(Board board : lastSaveState.boards) {
+                System.out.println(board.name + ": " + board.keep);
+            }
 
         }
         catch (IOException | ClassNotFoundException e) {

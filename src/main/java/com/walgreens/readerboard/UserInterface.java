@@ -137,7 +137,7 @@ class UserInterface extends JFrame implements ActionListener {
         JPanel menu = new JPanel();
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         JButton save = new ImageButton("Import", Color.WHITE, "import.png", this, "import");
-        JButton print = new ImageButton("ComparisonPrinter", Color.WHITE, "print.png", this, "print");
+        JButton print = new ImageButton("Print", Color.WHITE, "print.png", this, "print");
         menu.add(save);
         menu.add(print);
 

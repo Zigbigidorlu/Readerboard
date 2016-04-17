@@ -5,6 +5,7 @@ import org.ini4j.Ini;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -23,6 +24,7 @@ public class Main {
     // Global variables
     static int boardCount, lineCount, maxLength, windowWidth, windowHeight;
     static String name, version;
+    static boolean writeLog;
 
     private static final int    default_boardCount, default_lineCount, default_maxLength,
                                 default_windowWidth, default_windowHeight;
@@ -37,6 +39,7 @@ public class Main {
 
     // Initialize class
     public static void main(String[] args) {
+        writeLog = Arrays.asList(args).contains("-log");
         new Main();
     }
 

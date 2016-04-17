@@ -14,11 +14,10 @@ import java.util.ArrayList;
  */
 class Board implements Serializable {
     String name;
-    ArrayList<char[]> messages;
-    ArrayList<Character> keep;
+    ArrayList<char[]> messages = new ArrayList<>();
+    ArrayList<Character> keep = new ArrayList<>();
     Board(String name) {
         this.name = name;
-        this.messages = new ArrayList<>();
     }
 
     ArrayList<Character> getCharacters() {
