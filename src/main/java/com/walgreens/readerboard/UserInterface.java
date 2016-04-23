@@ -218,7 +218,6 @@ class UserInterface extends JFrame implements ActionListener {
         }
     }
 
-    // TODO: Compare and print
     private void print() {
         new ComparisonPrinter(saveState);
     }

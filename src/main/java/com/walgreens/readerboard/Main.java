@@ -19,24 +19,27 @@ import java.util.Properties;
  * @since 2/22/2016
  */
 public class Main {
+    // Defaults
     private static final int default_boardCount, default_lineCount, default_maxLength,
             default_windowWidth, default_windowHeight;
+
+    // Local INI file
+    private Ini ini;
+
     // Global variables
     static int boardCount, lineCount, maxLength, windowWidth, windowHeight;
     static String name, version;
     static boolean writeLog;
+    private static boolean testRun;
 
     static {
+        default_windowWidth = 600;
+        default_windowHeight = 375;
         default_boardCount = 4;
         default_lineCount = 4;
         default_maxLength = 16;
-        default_windowWidth = 600;
-        default_windowHeight = 375;
     }
 
-    private Ini ini;
-    private SaveState saveState;
-    private ServerSocket lock;
 
     private Main() {
         // Set look and feel of swing windows
@@ -53,7 +56,7 @@ public class Main {
 
         // Check against application lock
         try {
-            lock = new ServerSocket(51603);
+            new ServerSocket(51603);
 
             // Load data and start GUI
             try {
@@ -75,6 +78,7 @@ public class Main {
     // Initialize class
     public static void main(String[] args) {
         writeLog = Arrays.asList(args).contains("-log");
+        testRun = Arrays.asList(args).contains("-test");
         new Main();
     }
 
@@ -122,8 +126,17 @@ public class Main {
 
     // Build initial INI file
     private void buildINI(File file) throws IOException {
-        if (file.createNewFile()) {
+        // Temporary ini for test runs
+        if(testRun) {
+            file = File.createTempFile("rb_", ".ini", new File("."));
+            file.deleteOnExit();
+        }
+
+        if (    (testRun && file.exists()) ||
+                file.createNewFile()) {
             // Set default values
+            windowWidth = default_windowWidth;
+            windowHeight = default_windowHeight;
             boardCount = default_boardCount;
             lineCount = default_lineCount;
             maxLength = default_maxLength;
@@ -142,7 +155,7 @@ public class Main {
     }
 
     private void startGUI() throws IOException, ClassNotFoundException {
-        saveState = new SaveState().load();
+        SaveState saveState = new SaveState().load();
         new UserInterface(saveState);
     }
 }

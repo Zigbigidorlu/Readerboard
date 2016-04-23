@@ -1,22 +1,18 @@
 package com.walgreens.readerboard;
 
-import j2html.tags.ContainerTag;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
-import java.io.BufferedReader;
+import java.awt.print.*;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.walgreens.readerboard.UserInterface.wagRed;
-import static j2html.TagCreator.*;
+import static java.awt.print.Printable.NO_SUCH_PAGE;
 
 /**
  * Readerboard
@@ -29,150 +25,121 @@ import static j2html.TagCreator.*;
  */
 class ComparisonPrinter extends JDialog implements ActionListener {
     private SaveState saveState;
-    private JEditorPane previewArea;
 
     ComparisonPrinter(SaveState saveState) {
-        this.saveState = saveState;
-        buildComparison();
-    }
-
-    private void buildComparison() {
         try {
-            // Load last week's board
-            File lastWeek = saveState.getRecent(new File("saves"), true);
-            SaveState lastSaveState = new SaveState().load(lastWeek);
+            this.saveState = saveState;
 
-            // Get characters from this week's boards
-            ArrayList<Character> characters = saveState.getCharacters();
+            // Create keep array
+            SaveState compared = buildComparison();
 
-            // Build letters to keep
-            for (Board board : lastSaveState.boards) {
-                for (Character c : board.getCharacters()) {
-                    for (int i = 0; i < characters.size(); i++) {
-                        Character ch = characters.get(i);
-                        if (c == ch && c != ' ') {
-                            board.keep.add(c);
-                            characters.remove(i);
-                            break;
-                        }
-                    }
+            // Get paper for sizing
+            Paper paper = new Paper();
+
+            // Build printable panel
+            setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+            getContentPane().setBackground(Color.WHITE);
+
+            // Build contents
+            for(Board board : compared.boards) {
+                JLabel boardName = new JLabel(board.name);
+                Font font = boardName.getFont().deriveFont(Font.BOLD, 16);
+                boardName.setFont(font);
+                add(boardName);
+
+                // Keep letters label
+                JLabel keepLetters = new JLabel("Keep letters: ");
+                keepLetters.setFont(keepLetters.getFont().deriveFont(Font.ITALIC,14));
+                add(keepLetters);
+
+                // Build a label with the kept characters
+                String keep = StringUtils.join(board.keep," ").toUpperCase();
+                JLabel keeping = new JLabel(keep);
+                keeping.setFont(keeping.getFont().deriveFont(12f));
+                Dimension size = keeping.getSize();
+                size.width = (int) paper.getImageableWidth();
+                keeping.setPreferredSize(size);
+                add(keeping);
+
+                // Spacer
+                add(Box.createVerticalStrut(5));
+
+                // Messages label
+                JLabel messages = new JLabel("Messages: ");
+                messages.setFont(messages.getFont().deriveFont(Font.ITALIC,14));
+                add(messages);
+
+                // Build the new messages
+                for(char[] message : board.messages) {
+                    String line = StringUtils.join(ArrayUtils.toObject(message), "").toUpperCase();
+                    JLabel lineLabel = new JLabel("<HTML>" + line + "</HTML>");
+                    lineLabel.setFont(lineLabel.getFont().deriveFont(12f));
+                    add(lineLabel);
                 }
+
+                // Spacer
+                add(Box.createVerticalStrut(10));
             }
 
-            // Build an HTML page for printing (using j2html)
-            ContainerTag body = body();
-            for (Board board : lastSaveState.boards) {
-                // Pre-formatted
-                ContainerTag pre = pre();
-
-                // Header
-                ContainerTag header = h2(board.name);
-
-                // Keep Label
-                pre.with(text("Keep: " + board.keep), br());
-
-                // Build new messages
-                for (char[] chars : board.messages) {
-                    for (char aChar : chars) {
-                        pre.with(text(aChar + " "));
-                    }
-                    pre.with(br());
-                }
-
-                // Paragraph
-                ContainerTag paragraph = p();
-                paragraph.with(header, pre);
-
-                // Add to body
-                body.with(paragraph);
-            }
-
-            // HTML container
-            ContainerTag html = html().with(body);
-
-            //File with contents
-            File temp = File.createTempFile("readerboard", ".rbml");
-            FileUtils.writeStringToFile(temp, html.toString());
-            System.out.println(temp.getCanonicalPath());
-
-            // Display print preview
-            printPreview(temp);
-        } catch (IOException | ClassNotFoundException e) {
+            pack();
+            doPrint();
+        }
+        catch (IOException | ClassNotFoundException e) {
             new CrashHandler(e);
         }
     }
 
-    private void printPreview(File tempFile) throws IOException {
-        String contents;
+    private SaveState buildComparison() throws IOException, ClassNotFoundException {
+        // Load last week's board
+        File lastWeek = saveState.getRecent(new File("saves"), true);
+        SaveState lastSaveState = new SaveState().load(lastWeek);
 
-        // Read temp file to string
-        try (BufferedReader br = new BufferedReader(new FileReader(tempFile))) {
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
+        // Get characters from this week's boards
+        ArrayList<Character> characters = saveState.getCharacters();
 
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                line = br.readLine();
+        // Build letters to keep
+        for (Board board : lastSaveState.boards) {
+            for (Character c : board.getCharacters()) {
+                for (int i = 0; i < characters.size(); i++) {
+                    Character ch = characters.get(i);
+                    if (c == ch && c != ' ') {
+                        board.keep.add(c);
+                        characters.remove(i);
+                        break;
+                    }
+                }
             }
-            contents = sb.toString();
-
         }
 
-        // Create dialog
-        setModal(true);
-        setPreferredSize(new Dimension(650, 475));
-        setIconImages(UserInterface.icons);
-        setTitle("Print Preview");
-
-        // Build base pane
-        JPanel panel = new JPanel(new BorderLayout());
-        add(panel);
-
-        // Build preview pane
-        previewArea = new JEditorPane();
-        previewArea.setEditable(false);
-        previewArea.setBackground(Color.WHITE);
-
-        // Assign text to pane
-        previewArea.setContentType("text/html");
-        previewArea.setText(contents);
-
-        // Create a scroll pane, add preview to it
-        JScrollPane scrollPane = new JScrollPane(previewArea);
-        add(scrollPane, BorderLayout.CENTER);
-
-        // Build a simple toolbar
-        add(buildToolbar(), BorderLayout.NORTH);
-
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    private JToolBar buildToolbar() {
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-        toolBar.setLayout(new BorderLayout());
-
-        // Set dimensions
-        Dimension dimension = new Dimension();
-        dimension.height = 45;
-        toolBar.setPreferredSize(dimension);
-        toolBar.setBackground(wagRed);
-
-        // Add print button
-        ImageButton print = new ImageButton("Print", Color.WHITE, "print_sm.png", this, "print", true);
-        toolBar.add(print, BorderLayout.WEST);
-
-        return toolBar;
+        return lastSaveState;
     }
 
     private void doPrint() {
-        PrinterJob pj = PrinterJob.getPrinterJob();
-        if (pj.printDialog()) {
+        PrinterJob printerJob = PrinterJob.getPrinterJob();
+        printerJob.setJobName("Readerboard Assistant");
+
+        // Set page format
+        PageFormat format = printerJob.defaultPage();
+        format.setOrientation(PageFormat.PORTRAIT);
+
+        // Set printable
+        printerJob.setPrintable((graphics, pageFormat, pageIndex) -> {
+            // Print only one copy
+            if (pageIndex > 0) {
+                return NO_SUCH_PAGE;
+            }
+
+            Graphics2D graphics2D = (Graphics2D) graphics;
+            graphics2D.translate(pageFormat.getImageableX(),
+                    (pageFormat.getImageableY() - (pageIndex * pageFormat.getImageableHeight())));
+
+            getContentPane().printAll(graphics2D);
+            return Printable.PAGE_EXISTS;
+        }, printerJob.validatePage(format));
+
+        if (printerJob.printDialog()) {
             try {
-                previewArea.print();
+                printerJob.print();
             } catch (PrinterException e) {
                 new CrashHandler(e);
             }
