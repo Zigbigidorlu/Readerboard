@@ -41,7 +41,9 @@ class ComparisonPrinter extends JDialog implements ActionListener {
             getContentPane().setBackground(Color.WHITE);
 
             // Build contents
-            for(Board board : compared.boards) {
+            for(int i = 0; i < compared.boards.size(); i++) {
+                Board board = compared.boards.get(i);
+
                 JLabel boardName = new JLabel(board.name);
                 Font font = boardName.getFont().deriveFont(Font.BOLD, 16);
                 boardName.setFont(font);
@@ -64,17 +66,45 @@ class ComparisonPrinter extends JDialog implements ActionListener {
                 // Spacer
                 add(Box.createVerticalStrut(5));
 
-                // Messages label
-                JLabel messages = new JLabel("Messages: ");
-                messages.setFont(messages.getFont().deriveFont(Font.ITALIC,14));
-                add(messages);
+                // Build the new message
+                for(int j = 0; j < saveState.boards.get(i).messages.size(); j++) {
+                    char[] message = saveState.boards.get(i).messages.get(j);
 
-                // Build the new messages
-                for(char[] message : board.messages) {
-                    String line = StringUtils.join(ArrayUtils.toObject(message), "").toUpperCase();
+                    // New message
+                    String line = StringUtils.join(ArrayUtils.toObject(message), " ").toUpperCase();
                     JLabel lineLabel = new JLabel("<HTML>" + line + "</HTML>");
-                    lineLabel.setFont(lineLabel.getFont().deriveFont(12f));
+                    lineLabel.setFont(lineLabel.getFont().deriveFont(11f));
                     add(lineLabel);
+
+                    // Keep/Need labels
+                    ArrayList<Character> save = new ArrayList<>();
+                    ArrayList<Character> need = new ArrayList<>();
+                    for(char c : message) {
+                        for(int k = 0; k < board.keep.size(); k++) {
+                            Character ch = board.keep.get(k);
+                            if (c == ch && c != ' ') {
+                                save.add(ch);
+                                board.keep.remove(k);
+                                break;
+                            }
+                            else if (c != ch && c != ' ') {
+                                need.add(ch);
+                                board.keep.remove(k);
+                                break;
+                            }
+                        }
+                    }
+                    Character[] characters = save.toArray(new Character[save.size()]);
+                    String keepLine = StringUtils.join(new String(ArrayUtils.toPrimitive(characters)), " ").toUpperCase();
+                    JLabel keepLabel = new JLabel("<HTML>Keep: " + keepLine + "</HTML>");
+                    keepLabel.setFont(keepLabel.getFont().deriveFont(11f));
+                    add(keepLabel);
+
+                    characters = need.toArray(new Character[need.size()]);
+                    String needLine = StringUtils.join(new String(ArrayUtils.toPrimitive(characters)), " ").toUpperCase();
+                    JLabel needLabel = new JLabel("<HTML>Need: " + needLine + "</HTML>");
+                    needLabel.setFont(needLabel.getFont().deriveFont(11f));
+                    add(needLabel);
                 }
 
                 // Spacer
